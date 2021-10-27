@@ -38,14 +38,15 @@ jobs:
       env:
         TNAME: RM2100
       run: |
+
+        cp -f ./config/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/vpncli.asp
+        cp -f ./config/defaults.* /opt/rt-n56u/trunk/user/shared/
+        #cp -f ./config/$TNAME.config .config
         cd /opt/rt-n56u/trunk
         if [ ! -f configs/templates/$TNAME.config ] ; then
         echo "configs/templates/$TNAME.config not found "
         exit 1
         fi
-        cp -f ./config/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/vpncli.asp
-        cp -f ./config/defaults.* /opt/rt-n56u/trunk/user/shared/
-        #cp -f ./config/$TNAME.config .config
         cp -f configs/templates/$TNAME.config .config
         sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
         ################################################################################################
