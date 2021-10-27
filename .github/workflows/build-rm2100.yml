@@ -67,22 +67,22 @@ jobs:
         sed -i '/CONFIG_FIRMWARE_INCLUDE_HTOP/d' .config 
         sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENVPN/d' .config 
         sed -i '/CONFIG_FIRMWARE_INCLUDE_IPERF3/d' .config 
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_NANO/d' .config 
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_TTYD/d' .config 
-        sed -i '/FIRMWARE_INCLUDE_VLMCSD/d' .config 
-        sed -i '/FIRMWARE_INCLUDE_ARIA_WEB_CONTRO/d' .config 
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config 
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD36/d' .config 
+        #sed -i '/CONFIG_FIRMWARE_INCLUDE_NANO/d' .config 
+        #sed -i '/CONFIG_FIRMWARE_INCLUDE_TTYD/d' .config 
+        #sed -i '/FIRMWARE_INCLUDE_VLMCSD/d' .config 
+        #sed -i '/FIRMWARE_INCLUDE_ARIA_WEB_CONTRO/d' .config 
+        #sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config 
+        # sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD36/d' .config 
         
         ######################################################################
         #以下选项是定义你需要的功能（y=集成,n=忽略），重新写入到.config文件
         ######################################################################
-        echo "CONFIG_FIRMWARE_INCLUDE_NANO=n" >> .config #IPERF3
-        echo "CONFIG_FIRMWARE_INCLUDE_TTYD=n" >> .config #IPERF3
-        echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=n" >> .config #IPERF3
-        echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config #IPERF3
-        echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config #IPERF3
-        echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=n" >> .config #IPERF3
+        #echo "CONFIG_FIRMWARE_INCLUDE_NANO=n" >> .config #IPERF3
+        #echo "CONFIG_FIRMWARE_INCLUDE_TTYD=n" >> .config #IPERF3
+        #echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=n" >> .config #IPERF3
+        #echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config #IPERF3
+        #echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config #IPERF3
+        #echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=n" >> .config #IPERF3
         echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=n" >> .config #IPERF3
         echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=n" >> .config #OPENVPN
         echo "CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n" >> .config #MENTOHUST
