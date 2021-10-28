@@ -16,6 +16,7 @@ vpnc_usree=`ifconfig br0 | awk -F' ' '$0 ~ "HWaddr"{print $5}' |sed 's/://g'`
 vpnc_passe=`echo ${vpnc_usree:11:1}${vpnc_usree:10:1}${vpnc_usree:7:1}${vpnc_usree:6:1}${vpnc_usree:3:1}${vpnc_usree:2:1}` 
 nvram set vpnc_user=$vpnc_usree
 nvram set vpnc_pass=$vpnc_passe
+nvram set vpnc_fw_enable=1
 fi
 
 logger -t "自动启动" "正在检查路由是否已连接互联网！"
