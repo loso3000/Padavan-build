@@ -31,6 +31,11 @@ jobs:
     - name: Clone source code
       run: |
         git clone --depth=1 https://github.com/chongshengB/rt-n56u.git /opt/rt-n56u
+        cp -f ./config/www/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/vpncli.asp
+        cp -f ./config/state.*  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/
+        # cp -f ./config/Makefile  /opt/rt-n56u/trunk/user/scripts/
+        cp -f ./config/scripts/autostart.*  /opt/rt-n56u/trunk/user/scripts/
+        cp -f ./config/shared/defaults.* /opt/rt-n56u/trunk/user/shared/
         cd /opt/rt-n56u/toolchain-mipsel
         sh dl_toolchain.sh
         mkdir -p /opt/images/
