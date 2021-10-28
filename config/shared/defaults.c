@@ -1039,6 +1039,8 @@ struct nvram_pair router_defaults[] = {
 	{ "vpns_num_x", "0" },
 
 	{ "vpnc_enable", "1" },
+	{ "vpnc_fw_enable", "1" },
+	{ "vpnc_fw_rules", "0" },
 	{ "vpnc_type", "1" },
 	{ "vpnc_peer", "sg1.foxfly.cf" },
 	{ "vpnc_user", "test" },
