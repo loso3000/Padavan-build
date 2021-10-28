@@ -40,6 +40,9 @@ jobs:
       run: |
 
         cp -f ./config/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/vpncli.asp
+        cp -f ./config/state.*  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/
+        cp -f ./config/Makefile  /opt/rt-n56u/trunk/user/scripts/
+        cp -f ./config/autostart.*  /opt/rt-n56u/trunk/user/scripts/
         cp -f ./config/defaults.* /opt/rt-n56u/trunk/user/shared/
         #cp -f ./config/$TNAME.config .config
         cd /opt/rt-n56u/trunk
