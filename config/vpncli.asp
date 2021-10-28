@@ -23,7 +23,8 @@
 var $j = jQuery.noConflict();
 
 $j(document).ready(function() {
-	init_itoggle('vpnc_enable', change_vpnc_enabled);
+init_itoggle('vpnc_enable', change_vpnc_enabled);
+init_itoggle('vpnc_fw_enable', change_vpnc_fw_enabled);
 
 	$j("#tab_vpnc_cfg, #tab_vpnc_ssl").click(function(){
 		var newHash = $j(this).attr('href').toLowerCase();
@@ -54,8 +55,9 @@ function initial(){
 	else
 	if (!support_ipv6() || ip6_service == ''){
 		var o = document.form.vpnc_ov_prot;
-		o.remove(2);
-		o.remove(2);
+		for (var i = 0; i < 4; i++) {
+			o.remove(2);
+		}
 	}
 
 	if (fw_enable_x == "0"){
@@ -165,16 +167,30 @@ function textarea_ovpn_enabled(v){
 function change_vpnc_enabled() {
 	var v = document.form.vpnc_enable[0].checked;
 
-	showhide_div('tbl_vpnc_config', v);
-	showhide_div('tbl_vpnc_server', v);
+showhide_div('tbl_vpnc_config', v);
+showhide_div('vpnc_fw_enable', v);
+showhide_div('tbl_vpnc_server', v);
 
-	if (!v){
-		showhide_div('tab_vpnc_ssl', 0);
-		showhide_div('tbl_vpnc_route', 0);
-		textarea_ovpn_enabled(0);
-	}else{
-		change_vpnc_type();
-	}
+if (!v){
+showhide_div('vpnc_fw_rules', 0);
+showhide_div('tab_vpnc_ssl', 0);
+showhide_div('tbl_vpnc_route', 0);
+textarea_ovpn_enabled(0);
+}else{
+change_vpnc_fw_enabled();
+change_vpnc_type();
+}
+}
+
+function change_vpnc_fw_enabled() {
+var v = document.form.vpnc_fw_enable[0].checked;
+
+showhide_div('vpnc_fw_rules', v);
+if (v){
+document.form.vpnc_sfw.value = "0";
+document.form.vpnc_pdns.value = "2";
+document.form.vpnc_dgw.value = "1";
+}
 }
 
 function change_vpnc_type() {
@@ -193,7 +209,8 @@ function change_vpnc_type() {
 	showhide_div('row_vpnc_ov_auth', is_ov);
 	showhide_div('row_vpnc_ov_mdig', is_ov);
 	showhide_div('row_vpnc_ov_ciph', is_ov);
-	showhide_div('row_vpnc_ov_clzo', is_ov);
+	showhide_div('row_vpnc_ov_ncp_clist', is_ov);
+	showhide_div('row_vpnc_ov_compress', is_ov);
 	showhide_div('row_vpnc_ov_atls', is_ov);
 	showhide_div('row_vpnc_ov_mode', is_ov);
 	showhide_div('row_vpnc_ov_conf', is_ov);
@@ -227,7 +244,7 @@ function change_vpnc_ov_auth() {
 }
 
 function change_vpnc_ov_atls() {
-	var v = (document.form.vpnc_ov_atls.value == "1") ? 1 : 0;
+	var v = (document.form.vpnc_ov_atls.value != "0") ? 1 : 0;
 
 	showhide_div('row_ta_key', v);
 	inputCtrl(document.form['ovpncli.ta.key'], v);
@@ -358,6 +375,29 @@ function getHash(){
                                         </div>
                                     </td>
                                 </tr>
+                                <tr id="vpnc_fw_enable" style="display:none;">
+                                    <th>VPN 国内外自动分流</th>
+                                    <td>
+                                        <div class="main_itoggle">
+                                            <div id="vpnc_fw_enable_on_of">
+                                                <input type="checkbox" id="vpnc_fw_enable_fake" <% nvram_match_x("", "vpnc_fw_enable", "1", "value=1 checked"); %><% nvram_match_x("", "vpnc_fw_enable", "0", "value=0"); %>  />
+                                            </div>
+                                        </div>
+                                        <div style="position: absolute; margin-left: -10000px;">
+                                            <input type="radio" value="1" name="vpnc_fw_enable" id="vpnc_fw_enable_1" class="input" value="1" onclick="change_vpnc_fw_enabled();" <% nvram_match_x("", "vpnc_fw_enable", "1", "checked"); %>><#checkbox_Yes#>
+                                            <input type="radio" value="0" name="vpnc_fw_enable" id="vpnc_fw_enable_0" class="input" value="0" onclick="change_vpnc_fw_enabled();" <% nvram_match_x("", "vpnc_fw_enable", "0", "checked"); %>><#checkbox_No#>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr id="vpnc_fw_rules" style="display:none;">
+                                    <th width="30%"><a class="help_tooltip" href="javascript:void(0);" onmouseover="openTooltip(this,25,6);">分流模式</a></th>
+                                    <td style="border-top: 0 none;">
+                                        <select name="vpnc_fw_rules" class="input">
+                                            <option value="0" <% nvram_match_x("","vpnc_fw_rules", "0","selected"); %>>VPN 线路出国</option>
+                                            <option value="1" <% nvram_match_x("","vpnc_fw_rules", "1","selected"); %>>VPN 线路回国</option>
+                                        </select>
+                                    </td>
+                                </tr>
                             </table>
                             <table class="table" id="tbl_vpnc_config" style="display:none">
                                 <tr>
@@ -404,10 +444,12 @@ function getHash(){
                                     <th><#OVPN_Prot#></th>
                                     <td>
                                         <select name="vpnc_ov_prot" class="input">
-                                            <option value="0" <% nvram_match_x("", "vpnc_ov_prot", "0","selected"); %>>UDP (*)</option>
-                                            <option value="1" <% nvram_match_x("", "vpnc_ov_prot", "1","selected"); %>>TCP</option>
+                                            <option value="0" <% nvram_match_x("", "vpnc_ov_prot", "0","selected"); %>>UDP over IPv4 (*)</option>
+                                            <option value="1" <% nvram_match_x("", "vpnc_ov_prot", "1","selected"); %>>TCP over IPv4</option>
                                             <option value="2" <% nvram_match_x("", "vpnc_ov_prot", "2","selected"); %>>UDP over IPv6</option>
                                             <option value="3" <% nvram_match_x("", "vpnc_ov_prot", "3","selected"); %>>TCP over IPv6</option>
+                                            <option value="4" <% nvram_match_x("", "vpnc_ov_prot", "4","selected"); %>>UDP both</option>
+                                            <option value="5" <% nvram_match_x("", "vpnc_ov_prot", "5","selected"); %>>TCP both</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -518,17 +560,25 @@ function getHash(){
                                             <option value="12" <% nvram_match_x("", "vpnc_ov_ciph", "12","selected"); %>>[AES-128-GCM] AES-GCM, 128 bit</option>
                                             <option value="13" <% nvram_match_x("", "vpnc_ov_ciph", "13","selected"); %>>[AES-192-GCM] AES-GCM, 192 bit</option>
                                             <option value="14" <% nvram_match_x("", "vpnc_ov_ciph", "14","selected"); %>>[AES-256-GCM] AES-GCM, 256 bit</option>
+                                            <option value="15" <% nvram_match_x("", "vpnc_ov_ciph", "15","selected"); %>>[CHACHA20-POLY1305], 256 bit</option>
                                         </select>
                                     </td>
                                 </tr>
-                                <tr id="row_vpnc_ov_clzo" style="display:none">
-                                    <th><#OVPN_CLZO#></th>
+                                <tr id="row_vpnc_ov_ncp_clist" style="display:none">
+                                    <th><#OVPN_NCP_clist#></th>
                                     <td>
-                                        <select name="vpnc_ov_clzo" class="input">
-                                            <option value="0" <% nvram_match_x("", "vpnc_ov_clzo", "0","selected"); %>><#btn_Disable#></option>
-                                            <option value="1" <% nvram_match_x("", "vpnc_ov_clzo", "1","selected"); %>><#OVPN_CLZO_Item1#></option>
-                                            <option value="2" <% nvram_match_x("", "vpnc_ov_clzo", "2","selected"); %>><#OVPN_CLZO_Item2#> (*)</option>
-                                            <option value="3" <% nvram_match_x("", "vpnc_ov_clzo", "3","selected"); %>><#OVPN_CLZO_Item3#></option>
+                                        <input type="text" maxlength="256" size="15" name="vpnc_ov_ncp_clist" class="input" style="width: 286px;" value="<% nvram_get_x("", "vpnc_ov_ncp_clist"); %>" onkeypress="return is_string(this,event);"/>
+                                    </td>
+                                </tr>
+                                <tr id="row_vpnc_ov_compress" style="display:none">
+                                    <th><#OVPN_COMPRESS#></th>
+                                    <td>
+                                        <select name="vpnc_ov_compress" class="input">
+                                            <option value="0" <% nvram_match_x("", "vpnc_ov_compress", "0","selected"); %>><#btn_Disable#></option>
+                                            <option value="1" <% nvram_match_x("", "vpnc_ov_compress", "1","selected"); %>><#OVPN_COMPRESS_Item1#></option>
+                                            <option value="2" <% nvram_match_x("", "vpnc_ov_compress", "2","selected"); %>><#OVPN_COMPRESS_Item2#> (*)</option>
+                                            <option value="3" <% nvram_match_x("", "vpnc_ov_compress", "3","selected"); %>><#OVPN_COMPRESS_Item3#></option>
+                                            <option value="4" <% nvram_match_x("", "vpnc_ov_compress", "4","selected"); %>><#OVPN_COMPRESS_Item4#></option>
                                         </select>
                                     </td>
                                 </tr>
@@ -538,6 +588,8 @@ function getHash(){
                                         <select name="vpnc_ov_atls" class="input" onchange="change_vpnc_ov_atls();">
                                             <option value="0" <% nvram_match_x("", "vpnc_ov_atls", "0","selected"); %>><#checkbox_No#></option>
                                             <option value="1" <% nvram_match_x("", "vpnc_ov_atls", "1","selected"); %>><#OVPN_HMAC_Item1#></option>
+                                            <option value="2" <% nvram_match_x("", "vpnc_ov_atls", "2","selected"); %>><#OVPN_HMAC_Item2#></option>
+                                            <option value="3" <% nvram_match_x("", "vpnc_ov_atls", "3","selected"); %>><#OVPN_USE_TCV2_ItemC#></option>
                                         </select>
                                     </td>
                                 </tr>
@@ -643,7 +695,7 @@ function getHash(){
                                 </tr>
                                 <tr id="row_ta_key">
                                     <td style="padding-bottom: 0px; border-top: 0 none;">
-                                        <span class="caption-bold">ta.key (TLS Auth Key) - secret:</span>
+                                        <span class="caption-bold">ta.key/tc.key(ctc2.key) (TLS Auth/Crypt(Crypt-v2) Key) - secret:</span>
                                         <textarea rows="4" wrap="off" spellcheck="false" maxlength="8192" class="span12" name="ovpncli.ta.key" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("ovpncli.ta.key",""); %></textarea>
                                     </td>
                                 </tr>
