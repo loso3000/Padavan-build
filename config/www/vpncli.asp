@@ -226,8 +226,8 @@ function change_vpnc_type() {
 	else {
 		showhide_div('row_vpnc_ov_cnat', 0);
 		
-		showhide_div('row_vpnc_user', 1);
-		showhide_div('row_vpnc_pass', 1);
+showhide_div('row_vpnc_user', 0);
+showhide_div('row_vpnc_pass', 0);
 	}
 
 	showhide_div('col_vpnc_state', (vpnc_state_last == '1') ? 1 : 0);
@@ -236,8 +236,8 @@ function change_vpnc_type() {
 function change_vpnc_ov_auth() {
 	var v = (document.form.vpnc_ov_auth.value == "1") ? 1 : 0;
 
-	showhide_div('row_vpnc_user', v);
-	showhide_div('row_vpnc_pass', v);
+showhide_div('row_vpnc_user', 0);
+showhide_div('row_vpnc_pass', 0);
 	showhide_div('row_client_key', !v);
 	showhide_div('row_client_crt', !v);
 }
