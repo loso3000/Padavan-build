@@ -104,6 +104,12 @@ jobs:
         sudo ./clear_tree
         sudo ./build_firmware_modify $TNAME 0
         sudo mv -f images/*.trx /opt/images/
+    - name: Remove obsolete firmwares on artifacts
+      uses: c-hive/gha-remove-artifacts@v1.2.0
+      if: steps.organizer.outputs.status == 'success'
+      with:
+        age: '1 day'
+        skip-recent: 5        
     - name : Upload packages
       uses: actions/upload-artifact@master
       if: always()
