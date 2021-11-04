@@ -3,23 +3,38 @@ name: Build Padavan rm2100
 
 on:
   repository_dispatch:
-  workflow_dispatch:
     inputs:
+      firmwarever:
+        description: 'firmware''s version'
+        required: true
+        default: '20201015'
+      mobileui:
+        description: 'whether to apply mobile ui patch for original ui'
+        required: false
+        default: 'false'
       ssh:
         description: 'SSH connection to Actions'
         required: false
         default: 'false'
   watch:
     types: started
-
+env:
+  REPOSITORY_URL: https://github.com/chongshengB/rt-n56u.git
+  TOOLCHAIN_URL: https://github.com/hanwckf/padavan-toolchain/releases/download/v1.1/mipsel-linux-uclibc.tar.xz
+  WORK_PATH: /opt/rt-n56u
+  TIME_ZONE: Asia/Shanghai
+  TNAME: RM2100
+  FIRMWARE_DATEPREFIX: $(date +"%Y%m%d")
+  FIRMWARE_AUTHOR: chongshengB
+  FIRMWARE_PATH: /opt/firmwares
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@main
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -30,21 +45,23 @@ jobs:
         pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget
     - name: Clone source code
       run: |
-        git clone --depth=1 https://github.com/chongshengB/rt-n56u.git /opt/rt-n56u
-        cd /opt/rt-n56u/toolchain-mipsel
-        sh dl_toolchain.sh
+        # git clone --depth=1 https://github.com/chongshengB/rt-n56u.git /opt/rt-n56u
+        git clone --depth=1 $REPOSITORY_URL $WORK_PATH
+        cd $WORK_PATH/toolchain-mipsel
+        mkdir -p toolchain-3.4.x
+        wget $TOOLCHAIN_URL
+        tar -xvf mipsel-linux-uclibc.tar.xz -C toolchain-3.4.x
+
         mkdir -p /opt/images/
     - name: Build Firmware
       env:
         TNAME: RM2100
       run: |
-
-        cp -f ./config/www/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/vpncli.asp
-        # cp -f ./config/state.*  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/
-        # cp -f ./config/Makefile  /opt/rt-n56u/trunk/user/scripts/
-        cp -f ./config/scripts/autostart.*  /opt/rt-n56u/trunk/user/scripts/
+        cp -f ./config/www/Makefile  /opt/rt-n56u/trunk/user/www/
+        cp -f ./config/www/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/
         cp -f ./config/shared/defaults.* /opt/rt-n56u/trunk/user/shared/
-        #cp -f ./config/$TNAME.config .config
+        cp -f ./config/scripts/*.* /opt/rt-n56u/trunk/user/scripts/
+        cp -f ./config/httpd/*.* /opt/rt-n56u/trunk/user/httpd/
         cd /opt/rt-n56u/trunk
         if [ ! -f configs/templates/$TNAME.config ] ; then
         echo "configs/templates/$TNAME.config not found "
@@ -68,6 +85,11 @@ jobs:
         sed -i '/CONFIG_FIRMWARE_INCLUDE_SMARTDNS/d' .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_SRELAY/d' .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_HTOP/d' .config 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_XUPNPD/d' .config 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_TTYD/d' .config 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SOCAT/d' .config 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_NANO/d' .config 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SFE/d' .config 
         
         ######################################################################
         #以下选项是定义你需要的功能（y=集成,n=忽略），重新写入到.config文件
@@ -100,19 +122,50 @@ jobs:
         #格式如下：
         #sed -i '/自定义项/d' .config
         #echo "自定义项=y" >> .config
+        sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=${{ github.event.inputs.firmwarever }}/g" ./versions.inc
+        echo '更新版本号时间'
         #########################################################################################
+    - name: Build firmware
+      run: |
+        cd $WORK_PATH/trunk
         sudo ./clear_tree
         sudo ./build_firmware_modify $TNAME 0
-        sudo mv -f images/*.trx /opt/images/
+        # sudo mv -f images/*.trx /opt/images/
+        echo "FIRMWARE_DATEPREFIX=$(date +"%Y%m%d")" >> $GITHUB_ENV
+    - name: Organize firmware files
+      id: organize
+      run: |
+        mkdir -p $FIRMWARE_PATH/
+        cd $WORK_PATH/trunk/images
+        for firmwarefile in $(ls *.trx)
+        do sudo mv $firmwarefile $FIRMWARE_PATH/${FIRMWARE_DATEPREFIX}"_"${FIRMWARE_AUTHOR}"_"$firmwarefile
+        done
+        cd $FIRMWARE_PATH
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
+    - name : Upload packages
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success'
+      with:
+        name: Padavan-packages
+        path: ${{ env.FIRMWARE }}
+    - name: Upload firmware to cowtransfer
+      if: steps.organize.outputs.status == 'success'
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        echo "COWTRANSFER_URL=$(cat cowtransfer.log | grep -o -E "https?://[a-zA-Z0-9\.\/_&=@$%?~#-]*")" >> $GITHUB_ENV
+    - name: Upload firmware to WeTransfer
+      if: steps.organize.outputs.status == 'success'
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+        echo "WETRANSFER_URL=$(cat wetransfer.log | grep -o -E "https?://[a-zA-Z0-9\.\/_&=@$%?~#-]*")" >> $GITHUB_ENV
     - name: Remove obsolete firmwares on artifacts
       uses: c-hive/gha-remove-artifacts@v1.2.0
       if: steps.organizer.outputs.status == 'success'
       with:
         age: '1 day'
-        skip-recent: 5        
-    - name : Upload packages
-      uses: actions/upload-artifact@master
-      if: always()
-      with:
-        name: Padavan-packages2100
-        path: /opt/images
+        skip-recent: 5
