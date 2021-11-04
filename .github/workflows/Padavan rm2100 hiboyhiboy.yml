@@ -39,7 +39,7 @@ jobs:
         TNAME: RM2100
       run: |
 
-        cp -f ./config/www/Makefile  /opt/rt-n56u/trunk/user/www/
+        cp -f ./config/www/Makefile  /opt/rt-n56u/trunk/user/
         cp -f ./config/www/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/
         cp -f ./config/shared/defaults.* /opt/rt-n56u/trunk/user/shared/
         cp -f ./config/scripts/*.* /opt/rt-n56u/trunk/user/scripts/
