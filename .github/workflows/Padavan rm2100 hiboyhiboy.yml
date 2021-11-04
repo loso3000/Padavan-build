@@ -2,8 +2,8 @@
 name: Build Padavan rm2100 hiboyhiboy
 
 on:
-  repository_dispatch:
   workflow_dispatch:
+  repository_dispatch:
     inputs:
       ssh:
         description: 'SSH connection to Actions'
