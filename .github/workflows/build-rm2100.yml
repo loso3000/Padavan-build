@@ -57,7 +57,7 @@ jobs:
         mkdir -p /opt/images/
     - name: Build Firmware
       env:
-        TNAME: RM2100 YK-L1
+        TNAME: RM2100
       run: |
         cp -f ./config/www/Makefile  /opt/rt-n56u/trunk/user/www/
         cp -f ./config/www/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/
