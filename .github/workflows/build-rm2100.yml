@@ -2,7 +2,7 @@
 name: Build Padavan rm2100
 
 on:
- repository_dispatch:
+  workflow_dispatch:
   repository_dispatch:
     inputs:
       firmwarever:
@@ -17,7 +17,7 @@ on:
         description: 'SSH connection to Actions'
         required: false
         default: 'false'
-  workflow_dispatch:
+  
   watch:
     types: started
 env:
