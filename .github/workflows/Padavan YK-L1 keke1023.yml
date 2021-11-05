@@ -1,5 +1,5 @@
 #修改TNAME: K2P-5.0 中的K2P-5.0为你需要编译的型号，注意名称要与configs/templates/目录下的名字相同
-name: Build Padavan YK-L1 hiboyhiboy
+name: Build Padavan YK-L1 keke1023
 
 on:
   workflow_dispatch:
@@ -11,7 +11,14 @@ on:
         default: 'false'
   watch:
     types: started
-
+env:
+  TOOLCHAIN_URL: https://github.com/hanwckf/padavan-toolchain/releases/download/v1.1/mipsel-linux-uclibc.tar.xz
+  WORK_PATH: /opt/rt-n56u
+  TIME_ZONE: Asia/Shanghai
+  TARGET_NAME: RM2100
+  FIRMWARE_DATEPREFIX: $(date +"%Y%m%d")
+  FIRMWARE_AUTHOR: keke1023
+  FIRMWARE_PATH: /opt/firmwares
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -30,20 +37,17 @@ jobs:
         pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget
     - name: Clone source code
       run: |
-        git clone --depth=1 https://github.com/hiboyhiboy/rt-n56u /opt/rt-n56u
-        cd /opt/rt-n56u/toolchain-mipsel
-        sh dl_toolchain.sh
+        git clone --depth=1 https://github.com/vb1980/Padavan-KVR.git /opt/rt-n56u
+        cd $WORK_PATH/toolchain-mipsel
+        mkdir -p toolchain-3.4.x
+        wget $TOOLCHAIN_URL
+        tar -xvf mipsel-linux-uclibc.tar.xz -C toolchain-3.4.x
         mkdir -p /opt/images/
     - name: Build Firmware
       env:
         TNAME: YK-L1
       run: |
-
-        cp -f ./config/www/Makefile  /opt/rt-n56u/trunk/user/www/
-        cp -f ./config/www/vpncli.asp  /opt/rt-n56u/trunk/user/www/n56u_ribbon_fixed/
-        cp -f ./config/shared/defaults.* /opt/rt-n56u/trunk/user/shared/
-        cp -f ./config/scripts/*.* /opt/rt-n56u/trunk/user/scripts/
-        cp -f ./config/httpd/*.* /opt/rt-n56u/trunk/user/httpd/
+        cp -rf ./hanwckf/* /opt/rt-n56u/trunk/
         cd /opt/rt-n56u/trunk
         if [ ! -f configs/templates/$TNAME.config ] ; then
         echo "configs/templates/$TNAME.config not found "
