@@ -45,7 +45,7 @@ jobs:
         mkdir -p /opt/images/
     - name: Build Firmware
       run: |
-        cp -rf ./hanwckf/*.* /opt/rt-n56u/trunk/
+        cp -rf ./hanwckf/*  /opt/rt-n56u/trunk/
         cd /opt/rt-n56u/trunk
         if [ ! -f configs/templates/$TNAME.config ] ; then
         echo "configs/templates/$TNAME.config not found "
