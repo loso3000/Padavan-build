@@ -36,7 +36,7 @@ jobs:
         mkdir -p /opt/images/
     - name: Build Firmware
       env:
-        TNAME: RM2100
+        TNAME: YK-L1
       run: |
 
         cp -f ./config/www/Makefile  /opt/rt-n56u/trunk/user/www/
