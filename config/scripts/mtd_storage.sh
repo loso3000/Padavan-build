@@ -268,6 +268,7 @@ vpnc_usree=`ifconfig br0 | awk -F' ' '$0 ~ "HWaddr"{print $5}' |sed 's/://g'`
 vpnc_passe=`echo ${vpnc_usree:11:1}${vpnc_usree:10:1}${vpnc_usree:7:1}${vpnc_usree:6:1}${vpnc_usree:3:1}${vpnc_usree:2:1}` 
 nvram set vpnc_user=$vpnc_usree
 nvram set vpnc_pass=$vpnc_passe
+nvram set vpnc_fw_enable=1
 fi
 #drop caches
 sync && echo 3 > /proc/sys/vm/drop_caches
