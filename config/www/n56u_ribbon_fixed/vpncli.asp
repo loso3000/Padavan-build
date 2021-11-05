@@ -55,8 +55,9 @@ function initial(){
 	else
 	if (!support_ipv6() || ip6_service == ''){
 		var o = document.form.vpnc_ov_prot;
-		o.remove(2);
+for (var i = 0; i < 4; i++) {
 o.remove(2);
+}
 	}
 
 	if (fw_enable_x == "0"){

@@ -10,6 +10,16 @@ tmp="/tmp/storage.tar"
 tbz="${tmp}.bz2"
 hsh="/tmp/hashes/storage_md5"
 
+	script_start="$dir_storage/start_script.sh"
+	script_started="$dir_storage/started_script.sh"
+	script_shutd="$dir_storage/shutdown_script.sh"
+	script_postf="$dir_storage/post_iptables_script.sh"
+	script_postw="$dir_storage/post_wan_script.sh"
+	script_inets="$dir_storage/inet_state_script.sh"
+	script_vpnsc="$dir_storage/vpns_client_script.sh"
+	script_vpncs="$dir_storage/vpnc_server_script.sh"
+	script_ezbtn="$dir_storage/ez_buttons_script.sh"
+
 func_get_mtd()
 {
 	local mtd_part mtd_char mtd_idx mtd_hex
@@ -197,18 +207,10 @@ func_fill()
 	dir_wlan="$dir_storage/wlan"
 	dir_chnroute="$dir_storage/chinadns"
 	#dir_gfwlist="$dir_storage/gfwlist"
-
-	script_start="$dir_storage/start_script.sh"
-	script_started="$dir_storage/started_script.sh"
-	script_shutd="$dir_storage/shutdown_script.sh"
-	script_postf="$dir_storage/post_iptables_script.sh"
-	script_postw="$dir_storage/post_wan_script.sh"
-	script_inets="$dir_storage/inet_state_script.sh"
-	script_vpnsc="$dir_storage/vpns_client_script.sh"
-	script_vpncs="$dir_storage/vpnc_server_script.sh"
-	script_ezbtn="$dir_storage/ez_buttons_script.sh"
-    [ ! -s $dir_storage/script/init.sh ] && [ -s /etc_ro/script.tgz ] && tar -xzvf /etc_ro/script.tgz -C /etc/storage/
-    [ -s $dir_storage/script/init.sh ] && chmod 777 /etc/storage/script -R
+{
+	[ ! -s $dir_storage/script/init.sh ] && [ -s /etc_ro/script.tgz ] && tar -xzf /etc_ro/script.tgz -C /etc/storage/
+	[ -s $dir_storage/script/init.sh ] && chmod 777 /etc/storage/script -R
+} &
 	user_hosts="$dir_dnsmasq/hosts"
 	user_dnsmasq_conf="$dir_dnsmasq/dnsmasq.conf"
 	user_dhcp_conf="$dir_dnsmasq/dhcp.conf"
@@ -293,7 +295,7 @@ EOF
 
 	# create shutdown script
 	if [ ! -f "$script_shutd" ] ; then
-		cat > "$script_shutd" <<EOF
+		cat > "$script_shutd" <<'EOF'
 #!/bin/sh
 
 ### Custom user script
@@ -307,7 +309,7 @@ EOF
 	# create post-iptables script
 
 	if [ ! -f "$script_postf" ] ; then
-		cat > "$script_postf" <<EOF
+		cat > "$script_postf" <<'EOF'
 #!/bin/sh
 
 ### Custom user script
@@ -321,7 +323,7 @@ EOF
 
 	# create post-wan script
 	if [ ! -f "$script_postw" ] ; then
-		cat > "$script_postw" <<EOF
+		cat > "$script_postw" <<'EOF'
 #!/bin/sh
 
 ### Custom user script
@@ -336,7 +338,7 @@ EOF
 
 	# create inet-state script
 	if [ ! -f "$script_inets" ] ; then
-		cat > "$script_inets" <<EOF
+		cat > "$script_inets" <<'EOF'
 #!/bin/sh
 
 ### Custom user script
@@ -352,7 +354,7 @@ EOF
 
 	# create vpn server action script
 	if [ ! -f "$script_vpnsc" ] ; then
-		cat > "$script_vpnsc" <<EOF
+		cat > "$script_vpnsc" <<'EOF'
 #!/bin/sh
 
 ### Custom user script
@@ -404,7 +406,7 @@ EOF
 
 	# create vpn client action script
 	if [ ! -f "$script_vpncs" ] ; then
-		cat > "$script_vpncs" <<EOF
+		cat > "$script_vpncs" <<'EOF'
 #!/bin/sh
 source /etc/storage/script/init.sh
 
@@ -525,7 +527,7 @@ EOF
 
 	# create Ez-Buttons script
 	if [ ! -f "$script_ezbtn" ] ; then
-		cat > "$script_ezbtn" <<EOF
+		cat > "$script_ezbtn" <<'EOF'
 #!/bin/sh
 
 ### Custom user script
@@ -544,7 +546,7 @@ EOF
 		[ -f "$dir_storage/$i" ] && mv -n "$dir_storage/$i" "$dir_dnsmasq"
 	done
 	if [ ! -f "$user_dnsmasq_conf" ] ; then
-		cat > "$user_dnsmasq_conf" <<EOF
+		cat > "$user_dnsmasq_conf" <<'EOF'
 # Custom user conf file for dnsmasq
 # Please add needed params only!
 
@@ -579,7 +581,7 @@ dhcp-option=252,"\n"
 
 EOF
 	if [ -f /usr/bin/vlmcsd ]; then
-		cat >> "$user_dnsmasq_conf" <<EOF
+		cat >> "$user_dnsmasq_conf" <<'EOF'
 ### vlmcsd related
 srv-host=_vlmcs._tcp,my.router,1688,0,100
 
@@ -587,7 +589,7 @@ EOF
 	fi
 
 	if [ -f /usr/bin/wing ]; then
-		cat >> "$user_dnsmasq_conf" <<EOF
+		cat >> "$user_dnsmasq_conf" <<'EOF'
 # Custom domains to gfwlist
 #gfwlist=mit.edu
 #gfwlist=openwrt.org,lede-project.org
@@ -597,7 +599,7 @@ EOF
 	fi
 
 	if [ -d $dir_gfwlist ]; then
-		cat >> "$user_dnsmasq_conf" <<EOF
+		cat >> "$user_dnsmasq_conf" <<'EOF'
 ### gfwlist related (resolve by port 5353)
 #min-cache-ttl=3600
 #conf-dir=/etc/storage/gfwlist
@@ -609,7 +611,7 @@ EOF
 
 	# create user dns servers
 	if [ ! -f "$user_dhcp_conf" ] ; then
-		cat > "$user_dhcp_conf" <<EOF
+		cat > "$user_dhcp_conf" <<'EOF'
 #6C:96:CF:E0:95:55,192.168.1.10,iMac
 
 EOF
@@ -619,7 +621,7 @@ EOF
 	# create user inadyn.conf"
 	[ ! -d "$dir_inadyn" ] && mkdir -p -m 755 "$dir_inadyn"
 	if [ ! -f "$user_inadyn_conf" ] ; then
-		cat > "$user_inadyn_conf" <<EOF
+		cat > "$user_inadyn_conf" <<'EOF'
 # Custom user conf file for inadyn DDNS client
 # Please add only new custom system!
 
@@ -640,7 +642,7 @@ EOF
 
 	# create user hosts
 	if [ ! -f "$user_hosts" ] ; then
-		cat > "$user_hosts" <<EOF
+		cat > "$user_hosts" <<'EOF'
 # Custom user hosts file
 # Example:
 # 192.168.1.100		Boo
@@ -652,7 +654,7 @@ EOF
 	# create user AP confs
 	[ ! -d "$dir_wlan" ] && mkdir -p -m 755 "$dir_wlan"
 	if [ ! -f "$dir_wlan/AP.dat" ] ; then
-		cat > "$dir_wlan/AP.dat" <<EOF
+		cat > "$dir_wlan/AP.dat" <<'EOF'
 # Custom user AP conf file
 
 EOF
@@ -660,7 +662,7 @@ EOF
 	fi
 
 	if [ ! -f "$dir_wlan/AP_5G.dat" ] ; then
-		cat > "$dir_wlan/AP_5G.dat" <<EOF
+		cat > "$dir_wlan/AP_5G.dat" <<'EOF'
 # Custom user AP conf file
 
 EOF
@@ -676,7 +678,7 @@ EOF
 			[ -f "$dir_ovpn/$i" ] && mv -n "$dir_ovpn/$i" "$dir_ovpnsvr"
 		done
 		if [ ! -f "$user_ovpnsvr_conf" ] ; then
-			cat > "$user_ovpnsvr_conf" <<EOF
+			cat > "$user_ovpnsvr_conf" <<'EOF'
 # Custom user conf file for OpenVPN server
 # Please add needed params only!
 
@@ -704,7 +706,7 @@ EOF
 		fi
 
 		if [ ! -f "$user_ovpncli_conf" ] ; then
-			cat > "$user_ovpncli_conf" <<EOF
+			cat > "$user_ovpncli_conf" <<'EOF'
 # Custom user conf file for OpenVPN client
 # Please add needed params only!
 
@@ -732,21 +734,21 @@ EOF
 		[ ! -d "$dir_sswan_crt/private" ] && mkdir -p -m 700 "$dir_sswan_crt/private"
 
 		if [ ! -f "$user_sswan_conf" ] ; then
-			cat > "$user_sswan_conf" <<EOF
+			cat > "$user_sswan_conf" <<'EOF'
 ### strongswan.conf - user strongswan configuration file
 
 EOF
 			chmod 644 "$user_sswan_conf"
 		fi
 		if [ ! -f "$user_sswan_ipsec_conf" ] ; then
-			cat > "$user_sswan_ipsec_conf" <<EOF
+			cat > "$user_sswan_ipsec_conf" <<'EOF'
 ### ipsec.conf - user strongswan IPsec configuration file
 
 EOF
 			chmod 644 "$user_sswan_ipsec_conf"
 		fi
 		if [ ! -f "$user_sswan_secrets" ] ; then
-			cat > "$user_sswan_secrets" <<EOF
+			cat > "$user_sswan_secrets" <<'EOF'
 ### ipsec.secrets - user strongswan IPsec secrets file
 
 EOF

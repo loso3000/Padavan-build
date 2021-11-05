@@ -8,6 +8,7 @@ romfs:
 	$(ROMFSINST) /sbin/dev_init.sh
 	$(ROMFSINST) /sbin/reset_ss.sh
 	$(ROMFSINST) /sbin/mtd_storage.sh
+	$(ROMFSINST) -p +x $(THISDIR)/wgetcurl.sh /sbin/wgetcurl.sh
 	$(ROMFSINST) -p +x $(THISDIR)/copyscripts.sh /usr/bin/copyscripts.sh
 	$(ROMFSINST) -p +x $(THISDIR)/autostart.sh /usr/bin/autostart.sh
 ifeq ($(STORAGE_ENABLED),y)
@@ -24,6 +25,8 @@ endif
 	$(ROMFSINST) /etc_ro/shells
 	$(ROMFSINST) /etc_ro/mdev.conf
 	$(ROMFSINST) /etc_ro/script.tgz
+	mkdir -p $(INSTALLDIR)/etc/storage/
+	tar -xzf ./script.tgz -C $(INSTALLDIR)/etc/storage/
 	$(ROMFSINST) /etc_ro/banner
 	mkdir -p $(INSTALLDIR)/usr/share/terminfo
 	tar -xzf ./terminfo.tar.gz -C $(INSTALLDIR)/usr/share
