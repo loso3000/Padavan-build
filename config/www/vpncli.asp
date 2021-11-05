@@ -55,9 +55,8 @@ function initial(){
 	else
 	if (!support_ipv6() || ip6_service == ''){
 		var o = document.form.vpnc_ov_prot;
-for (var i = 0; i < 4; i++) {
+		o.remove(2);
 o.remove(2);
-}
 	}
 
 	if (fw_enable_x == "0"){
@@ -407,7 +406,7 @@ function getHash(){
                                     <td>
                                         <select name="vpnc_type" class="input" onchange="change_vpnc_type();">
                                             <option value="0" <% nvram_match_x("", "vpnc_type", "0","selected"); %>>PPTP</option>
-                                            <option value="1" <% nvram_match_x("", "vpnc_type", "1","selected"); %>>L2TP (不含(w/o) IPSec)</option>
+                                            <option value="1" <% nvram_match_x("", "vpnc_type", "1","selected"); %>>L2TP (w/o IPSec)</option>
                                             <option value="2" <% nvram_match_x("", "vpnc_type", "2","selected"); %>>OpenVPN</option>
                                         </select>
                                         <span id="certs_hint" style="display:none" class="label label-warning"><#OVPN_Hint#></span>
@@ -468,13 +467,13 @@ function getHash(){
                                         </select>
                                     </td>
                                 </tr>
-                                <tr id="row_vpnc_user"  style="display:none">
+                                <tr id="row_vpnc_user">
                                     <th><#ISP_Authentication_user#></th>
                                     <td>
                                        <input type="text" maxlength="64" class="input" size="32" name="vpnc_user" value="<% nvram_get_x("", "vpnc_user"); %>" onkeypress="return is_string(this,event);"/>
                                     </td>
                                 </tr>
-                                <tr id="row_vpnc_pass"  style="display:none">
+                                <tr id="row_vpnc_pass">
                                     <th><#ISP_Authentication_pass#></th>
                                     <td>
                                         <div class="input-append">
@@ -577,7 +576,6 @@ function getHash(){
                                         <select name="vpnc_ov_atls" class="input" onchange="change_vpnc_ov_atls();">
                                             <option value="0" <% nvram_match_x("", "vpnc_ov_atls", "0","selected"); %>><#checkbox_No#></option>
                                             <option value="1" <% nvram_match_x("", "vpnc_ov_atls", "1","selected"); %>><#OVPN_HMAC_Item1#></option>
-                                            <option value="2" <% nvram_match_x("", "vpnc_ov_atls", "2","selected"); %>><#OVPN_HMAC_Item2#></option>
                                         </select>
                                     </td>
                                 </tr>
@@ -592,9 +590,9 @@ function getHash(){
                                 </tr>
                                 <tr id="row_vpnc_ov_conf" style="display:none">
                                     <td colspan="2" style="padding-bottom: 0px;">
-                                        <i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('spoiler_vpnc_ov_conf')"><span><#OVPN_User#></span></a>
+                                        <a href="javascript:spoiler_toggle('spoiler_vpnc_ov_conf')"><span><#OVPN_User#></span></a>
                                         <div id="spoiler_vpnc_ov_conf" style="display:none;">
-                                            <textarea rows="16" wrap="off" spellcheck="false" maxlength="2097152" class="span12" name="ovpncli.client.conf" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("ovpncli.client.conf",""); %></textarea>
+                                            <textarea rows="16" wrap="off" spellcheck="false" maxlength="8192" class="span12" name="ovpncli.client.conf" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("ovpncli.client.conf",""); %></textarea>
                                         </div>
                                     </td>
                                 </tr>
@@ -635,9 +633,9 @@ function getHash(){
                                 </tr>
                                 <tr>
                                     <td colspan="2" style="padding-bottom: 0px;">
-                                        <i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('spoiler_script')"><span><#RunPostVPNC#></span></a>
+                                        <a href="javascript:spoiler_toggle('spoiler_script')"><span><#RunPostVPNC#></span></a>
                                         <div id="spoiler_script" style="display:none;">
-                                            <textarea rows="16" wrap="off" spellcheck="false" maxlength="2097152" class="span12" name="scripts.vpnc_server_script.sh" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.vpnc_server_script.sh",""); %></textarea>
+                                            <textarea rows="16" wrap="off" spellcheck="false" maxlength="8192" class="span12" name="scripts.vpnc_server_script.sh" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.vpnc_server_script.sh",""); %></textarea>
                                         </div>
                                     </td>
                                 </tr>
