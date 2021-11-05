@@ -116,7 +116,7 @@ jobs:
         #格式如下：
         #sed -i '/自定义项/d' .config
         #echo "自定义项=y" >> .config
-        # sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=$(date +"%Y%m%d")/g" ./versions.inc
+        sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=$(date +"%Y%m%d")/g" ./versions.inc
         echo '更新版本号时间'
         #########################################################################################
     - name: Build firmware
@@ -141,7 +141,7 @@ jobs:
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success'
       with:
-        name: Padavan-packages
+        name: Padavan-packages-chongshengB
         path: ${{ env.FIRMWARE }}
     - name: Upload firmware to cowtransfer
       if: steps.organize.outputs.status == 'success'
