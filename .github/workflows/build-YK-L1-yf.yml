@@ -53,7 +53,7 @@ jobs:
         mkdir -p /opt/images/
     - name: Build Firmware
       env:
-        TNAME: RM2100
+        TNAME: YK-L1
       run: |
         cp -r ./config/* /opt/rt-n56u/trunk/user
         cd /opt/rt-n56u/trunk
