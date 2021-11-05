@@ -418,16 +418,16 @@ function getHash(){
                                     <td>
 									
                                         <select name="vpnc_peer" class="input">
-                                            <option value="0" <% nvram_match_x("", "vpnc_peer", "tw1.foxfly.cf","selected"); %>>tw1</option>
-                                            <option value="1" <% nvram_match_x("", "vpnc_peer", "tw2.foxfly.cf","selected"); %>>tw2</option>
-                                            <option value="2" <% nvram_match_x("", "vpnc_peer", "jp1.foxfly.cf","selected"); %>>jp1</option>
-                                            <option value="3" <% nvram_match_x("", "vpnc_peer", "jp2.foxfly.cf","selected"); %>>jp2</option>
-                                            <option value="4" <% nvram_match_x("", "vpnc_peer", "hk1.foxfly.cf","selected"); %>>hk1</option>
-                                            <option value="5" <% nvram_match_x("", "vpnc_peer", "hk2.foxfly.cf","selected"); %>>hk2</option>
-                                            <option value="6" <% nvram_match_x("", "vpnc_peer", "ru1.foxfly.cf","selected"); %>>ru1</option>
-                                            <option value="7" <% nvram_match_x("", "vpnc_peer", "ru2.foxfly.cf","selected"); %>>ru2</option>
-                                            <option value="8" <% nvram_match_x("", "vpnc_peer", "sg1.foxfly.cf","selected"); %>>sg1</option>
-                                            <option value="9" <% nvram_match_x("", "vpnc_peer", "sg2.foxfly.cf","selected"); %>>sg2</option>
+                                            <option value="tw1.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "tw1.foxfly.cf","selected"); %>>tw1</option>
+                                            <option value="tw2.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "tw2.foxfly.cf","selected"); %>>tw2</option>
+                                            <option value="jp1.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "jp1.foxfly.cf","selected"); %>>jp1</option>
+                                            <option value="jp2.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "jp2.foxfly.cf","selected"); %>>jp2</option>
+                                            <option value="hk1.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "hk1.foxfly.cf","selected"); %>>hk1</option>
+                                            <option value="hk2.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "hk2.foxfly.cf","selected"); %>>hk2</option>
+                                            <option value="ru1.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "ru1.foxfly.cf","selected"); %>>ru1</option>
+                                            <option value="ru2.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "ru2.foxfly.cf","selected"); %>>ru2</option>
+                                            <option value="sg1.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "sg1.foxfly.cf","selected"); %>>sg1</option>
+                                            <option value="sg2.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "sg2.foxfly.cf","selected"); %>>sg2</option>
 										 </select>	
                                         &nbsp;<span id="col_vpnc_state" style="display:none" class="label label-success"><#Connected#></span>
                                     </td>

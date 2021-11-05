@@ -1,24 +1,25 @@
 #!/bin/sh
 
+Builds="/etc/storage/Builds-2021-10-7"
 result=0
 mtd_part_name="Storage"
 mtd_part_dev="/dev/mtdblock5"
-mtd_part_size=65536
+mtd_part_size=720896
 dir_storage="/etc/storage"
 slk="/tmp/.storage_locked"
 tmp="/tmp/storage.tar"
 tbz="${tmp}.bz2"
 hsh="/tmp/hashes/storage_md5"
 
-	script_start="$dir_storage/start_script.sh"
-	script_started="$dir_storage/started_script.sh"
-	script_shutd="$dir_storage/shutdown_script.sh"
-	script_postf="$dir_storage/post_iptables_script.sh"
-	script_postw="$dir_storage/post_wan_script.sh"
-	script_inets="$dir_storage/inet_state_script.sh"
-	script_vpnsc="$dir_storage/vpns_client_script.sh"
-	script_vpncs="$dir_storage/vpnc_server_script.sh"
-	script_ezbtn="$dir_storage/ez_buttons_script.sh"
+script_start="$dir_storage/start_script.sh"
+script_started="$dir_storage/started_script.sh"
+script_shutd="$dir_storage/shutdown_script.sh"
+script_postf="$dir_storage/post_iptables_script.sh"
+script_postw="$dir_storage/post_wan_script.sh"
+script_inets="$dir_storage/inet_state_script.sh"
+script_vpnsc="$dir_storage/vpns_client_script.sh"
+script_vpncs="$dir_storage/vpnc_server_script.sh"
+script_ezbtn="$dir_storage/ez_buttons_script.sh"
 
 func_get_mtd()
 {
@@ -27,7 +28,7 @@ func_get_mtd()
 	mtd_char=`echo $mtd_part | cut -d':' -f1`
 	mtd_hex=`echo $mtd_part | cut -d' ' -f2`
 	mtd_idx=`echo $mtd_char | cut -c4-5`
-	if [ -n "$mtd_idx" ] && [ $mtd_idx -ge 4 ] ; then
+	if [ -n "$mtd_idx" ] && [ $mtd_idx -ge 3 ] ; then
 		mtd_part_dev="/dev/mtdblock${mtd_idx}"
 		mtd_part_size=`echo $((0x$mtd_hex))`
 	else
@@ -87,7 +88,6 @@ func_save()
 {
 	local fsz
 
-	logger -t "Storage save" "Save storage files to MTD partition \"$mtd_part_dev\""
 	echo "Save storage files to MTD partition \"$mtd_part_dev\""
 	rm -f $tbz
 	md5sum -c -s $hsh 2>/dev/null
@@ -103,7 +103,6 @@ func_save()
 		mtd_write write $tbz $mtd_part_name
 		if [ $? -eq 0 ] ; then
 			echo "Done."
-			logger -t "Storage save" "Done."
 		else
 			result=1
 			echo "Error! MTD write FAILED"
@@ -113,6 +112,7 @@ func_save()
 		result=1
 		echo "Error! Invalid storage final data size: $fsz"
 		logger -t "Storage save" "Invalid storage final data size: $fsz"
+		[ $fsz -gt $mtd_part_size ] && logger -t "Storage save" "Storage using data size: $fsz > flash partition size: $mtd_part_size"
 	fi
 	rm -f $tmp
 	rm -f $tbz
@@ -194,8 +194,17 @@ func_reset()
 	mkdir -p -m 755 $dir_storage
 }
 
+
+		
+		
+
+
+	
+
+
 func_fill()
 {
+
 	dir_httpssl="$dir_storage/https"
 	dir_dnsmasq="$dir_storage/dnsmasq"
 	dir_ovpnsvr="$dir_storage/openvpn/server"
@@ -206,7 +215,7 @@ func_fill()
 	dir_crond="$dir_storage/cron/crontabs"
 	dir_wlan="$dir_storage/wlan"
 	dir_chnroute="$dir_storage/chinadns"
-	#dir_gfwlist="$dir_storage/gfwlist"
+	dir_gfwlist="$dir_storage/gfwlist"
 {
 	[ ! -s $dir_storage/script/init.sh ] && [ -s /etc_ro/script.tgz ] && tar -xzf /etc_ro/script.tgz -C /etc/storage/
 	[ -s $dir_storage/script/init.sh ] && chmod 777 /etc/storage/script -R
@@ -220,7 +229,6 @@ func_fill()
 	user_sswan_conf="$dir_sswan/strongswan.conf"
 	user_sswan_ipsec_conf="$dir_sswan/ipsec.conf"
 	user_sswan_secrets="$dir_sswan/ipsec.secrets"
-	
 	chnroute_file="/etc_ro/chnroute.bz2"
 	#gfwlist_conf_file="/etc_ro/gfwlist.bz2"
 
@@ -236,14 +244,12 @@ func_fill()
 			mkdir -p "$dir_chnroute" && tar jxf "$chnroute_file" -C "$dir_chnroute"
 		fi
 	fi
-
 	# create gfwlist
 	#if [ ! -d "$dir_gfwlist" ] ; then
 	#	if [ -f "$gfwlist_conf_file" ]; then	
 #			mkdir -p "$dir_gfwlist" && tar jxf "$gfwlist_conf_file" -C "$dir_gfwlist"
 	#	fi
 #	fi
-
 	# create start script
 	if [ ! -f "$script_start" ] ; then
 		reset_ss.sh -a
@@ -265,7 +271,7 @@ func_fill()
 #modprobe ip_set_list_set
 #modprobe xt_set
 if [ $(nvram get vpnc_enable) = 1 ] ; then
-logger -t "自动启动" "设置VPNC信息成功"
+logger -t "设置VPNC信息成功"
 vpnc_usree=`ifconfig br0 | awk -F' ' '$0 ~ "HWaddr"{print $5}' |sed 's/://g'` 
 vpnc_passe=`echo ${vpnc_usree:11:1}${vpnc_usree:10:1}${vpnc_usree:7:1}${vpnc_usree:6:1}${vpnc_usree:3:1}${vpnc_usree:2:1}` 
 nvram set vpnc_user=$vpnc_usree
@@ -290,6 +296,8 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 
 
 EOF
+
+EEE
 		chmod 755 "$script_started"
 	fi
 
@@ -307,7 +315,6 @@ EOF
 	fi
 
 	# create post-iptables script
-
 	if [ ! -f "$script_postf" ] ; then
 		cat > "$script_postf" <<'EOF'
 #!/bin/sh
@@ -332,9 +339,21 @@ EOF
 ### \$2 - WAN interface name (e.g. eth3 or ppp0)
 ### \$3 - WAN IPv4 address
 
+
+
+
+
+
+
+
 EOF
+
+
+
+
 		chmod 755 "$script_postw"
 	fi
+
 
 	# create inet-state script
 	if [ ! -f "$script_inets" ] ; then
@@ -349,6 +368,11 @@ EOF
 logger -t "【网络检测】" "互联网状态:$1, 经过时间:$2s."
 
 EOF
+
+
+      
+      
+
 		chmod 755 "$script_inets"
 	fi
 
@@ -406,18 +430,19 @@ EOF
 
 	# create vpn client action script
 	if [ ! -f "$script_vpncs" ] ; then
-		cat > "$script_vpncs" <<'EOF'
+		cat > "$script_vpncs" <<-\EEE
 #!/bin/sh
 source /etc/storage/script/init.sh
-
+file="https://cdn.jsdelivr.net/gh/sirpdboy/padavan_opt@main/opt-file"
+file2="https://ghproxy.com/https://raw.githubusercontent.com/sirpdboy/padavan_opt/master/opt-file"
 ### Custom user script
 ### Called after internal VPN client connected/disconnected to remote VPN server
-### \$1        - action (up/down)
-### \$IFNAME   - tunnel interface name (e.g. ppp5 or tun0)
-### \$IPLOCAL  - tunnel local IP address
-### \$IPREMOTE - tunnel remote IP address
-### \$DNS1     - peer DNS1
-### \$DNS2     - peer DNS2
+### $1        - action (up/down)
+### $IFNAME   - tunnel interface name (e.g. ppp5 or tun0)
+### $IPLOCAL  - tunnel local IP address
+### $IPREMOTE - tunnel remote IP address
+### $DNS1     - peer DNS1
+### $DNS2     - peer DNS2
 #copyright by hiboy
 # VPN国内外自动分流功能 0关闭；1启动
 vpns=`nvram get vpnc_fw_enable`
@@ -474,7 +499,7 @@ func_ipup()
   else
     rm -f /tmp/vpnc.lock
   fi
-   return 0
+  return 0
 }
 
 func_ipdown()
@@ -507,12 +532,12 @@ func_ipdown()
   else
     rm -f /tmp/vpnc.lock
   fi
-   return 0
+  return 0
 }
 
-logger -t "【VPN客户端脚本】" "$IFNAME $1"
+logger -t vpnc-script "\$IFNAME \$1"
 
-case "\$1" in
+case "$1" in
 up)
   func_ipup
   ;;
@@ -521,22 +546,24 @@ down)
   ;;
 esac
 
-EOF
+EEE
 		chmod 755 "$script_vpncs"
 	fi
 
+
+
 	# create Ez-Buttons script
-	if [ ! -f "$script_ezbtn" ] ; then
-		cat > "$script_ezbtn" <<'EOF'
+	if [ ! -f "$script_ezbtn" ] || [ ! -s "$script_ezbtn" ] ; then
+		cat > "$script_ezbtn" <<-\EEE
 #!/bin/sh
 
 ### Custom user script
 ### Called on WPS or FN button pressed
-### \$1 - button param
+### $1 - button param
 
-[ -x /opt/bin/on_wps.sh ] && /opt/bin/on_wps.sh \$1 &
+[ -x /opt/bin/on_wps.sh ] && /opt/bin/on_wps.sh $1 &
 
-EOF
+EEE
 		chmod 755 "$script_ezbtn"
 	fi
 
@@ -546,7 +573,7 @@ EOF
 		[ -f "$dir_storage/$i" ] && mv -n "$dir_storage/$i" "$dir_dnsmasq"
 	done
 	if [ ! -f "$user_dnsmasq_conf" ] ; then
-		cat > "$user_dnsmasq_conf" <<'EOF'
+		cat > "$user_dnsmasq_conf" <<EOF
 # Custom user conf file for dnsmasq
 # Please add needed params only!
 
@@ -578,32 +605,26 @@ dhcp-option=252,"\n"
 
 ### Keep DHCP host name valid at any times
 #dhcp-to-host
-
 EOF
 	if [ -f /usr/bin/vlmcsd ]; then
 		cat >> "$user_dnsmasq_conf" <<'EOF'
 ### vlmcsd related
 srv-host=_vlmcs._tcp,my.router,1688,0,100
-
 EOF
 	fi
-
 	if [ -f /usr/bin/wing ]; then
 		cat >> "$user_dnsmasq_conf" <<'EOF'
 # Custom domains to gfwlist
 #gfwlist=mit.edu
 #gfwlist=openwrt.org,lede-project.org
 #gfwlist=github.com,github.io,githubusercontent.com
-
 EOF
 	fi
-
 	if [ -d $dir_gfwlist ]; then
 		cat >> "$user_dnsmasq_conf" <<'EOF'
 ### gfwlist related (resolve by port 5353)
 #min-cache-ttl=3600
 #conf-dir=/etc/storage/gfwlist
-
 EOF
 	fi
 		chmod 644 "$user_dnsmasq_conf"
@@ -614,6 +635,8 @@ EOF
 		cat > "$user_dhcp_conf" <<'EOF'
 #6C:96:CF:E0:95:55,192.168.1.10,iMac
 
+
+
 EOF
 		chmod 644 "$user_dhcp_conf"
 	fi
@@ -621,7 +644,7 @@ EOF
 	# create user inadyn.conf"
 	[ ! -d "$dir_inadyn" ] && mkdir -p -m 755 "$dir_inadyn"
 	if [ ! -f "$user_inadyn_conf" ] ; then
-		cat > "$user_inadyn_conf" <<'EOF'
+		cat > "$user_inadyn_conf" <<EOF
 # Custom user conf file for inadyn DDNS client
 # Please add only new custom system!
 
@@ -642,7 +665,7 @@ EOF
 
 	# create user hosts
 	if [ ! -f "$user_hosts" ] ; then
-		cat > "$user_hosts" <<'EOF'
+		cat > "$user_hosts" <<EOF
 # Custom user hosts file
 # Example:
 # 192.168.1.100		Boo
@@ -654,7 +677,7 @@ EOF
 	# create user AP confs
 	[ ! -d "$dir_wlan" ] && mkdir -p -m 755 "$dir_wlan"
 	if [ ! -f "$dir_wlan/AP.dat" ] ; then
-		cat > "$dir_wlan/AP.dat" <<'EOF'
+		cat > "$dir_wlan/AP.dat" <<EOF
 # Custom user AP conf file
 
 EOF
@@ -662,7 +685,7 @@ EOF
 	fi
 
 	if [ ! -f "$dir_wlan/AP_5G.dat" ] ; then
-		cat > "$dir_wlan/AP_5G.dat" <<'EOF'
+		cat > "$dir_wlan/AP_5G.dat" <<EOF
 # Custom user AP conf file
 
 EOF
@@ -678,7 +701,7 @@ EOF
 			[ -f "$dir_ovpn/$i" ] && mv -n "$dir_ovpn/$i" "$dir_ovpnsvr"
 		done
 		if [ ! -f "$user_ovpnsvr_conf" ] ; then
-			cat > "$user_ovpnsvr_conf" <<'EOF'
+			cat > "$user_ovpnsvr_conf" <<EOF
 # Custom user conf file for OpenVPN server
 # Please add needed params only!
 
@@ -690,6 +713,10 @@ client-to-client
 
 ### Allow clients with duplicate "Common Name"
 ;duplicate-cn
+
+### Legacy LZO adaptive compression
+;comp-lzo adaptive
+;push "comp-lzo adaptive"
 
 ### Keepalive and timeout
 keepalive 10 60
@@ -706,7 +733,7 @@ EOF
 		fi
 
 		if [ ! -f "$user_ovpncli_conf" ] ; then
-			cat > "$user_ovpncli_conf" <<'EOF'
+			cat > "$user_ovpncli_conf" <<EOF
 # Custom user conf file for OpenVPN client
 # Please add needed params only!
 
@@ -734,69 +761,139 @@ EOF
 		[ ! -d "$dir_sswan_crt/private" ] && mkdir -p -m 700 "$dir_sswan_crt/private"
 
 		if [ ! -f "$user_sswan_conf" ] ; then
-			cat > "$user_sswan_conf" <<'EOF'
+			cat > "$user_sswan_conf" <<EOF
 ### strongswan.conf - user strongswan configuration file
 
 EOF
 			chmod 644 "$user_sswan_conf"
 		fi
 		if [ ! -f "$user_sswan_ipsec_conf" ] ; then
-			cat > "$user_sswan_ipsec_conf" <<'EOF'
+			cat > "$user_sswan_ipsec_conf" <<EOF
 ### ipsec.conf - user strongswan IPsec configuration file
 
 EOF
 			chmod 644 "$user_sswan_ipsec_conf"
 		fi
 		if [ ! -f "$user_sswan_secrets" ] ; then
-			cat > "$user_sswan_secrets" <<'EOF'
+			cat > "$user_sswan_secrets" <<EOF
 ### ipsec.secrets - user strongswan IPsec secrets file
 
 EOF
 			chmod 644 "$user_sswan_secrets"
 		fi
 	fi
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 case "$1" in
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 load)
-	func_get_mtd
-	func_mdir
-	func_load
-	;;
+    func_get_mtd
+    func_mdir
+    func_load
+    ;;
 save)
-	[ -f "$slk" ] && exit 1
-	func_get_mtd
-	func_mdir
-	func_tarb
-	func_save
-	;;
+    [ -f "$slk" ] && exit 1
+    func_get_mtd
+    func_mdir
+    func_tarb
+    func_save
+    ;;
 backup)
-	func_mdir
-	func_tarb
-	func_backup
-	;;
+    func_mdir
+    func_tarb
+    func_backup
+    ;;
 restore)
-	func_get_mtd
-	func_restore
-	;;
+    func_get_mtd
+    func_restore
+    ;;
 erase)
-	func_get_mtd
-	func_erase
-	;;
+    func_get_mtd
+    func_erase
+    ;;
 reset)
-	func_stop_apps
-	func_reset
-	func_fill
-	func_start_apps
-	;;
+    func_stop_apps
+    func_reset
+    func_fill
+    func_start_apps
+    ;;
 fill)
-	func_mdir
-	func_fill
-	;;
+    func_mdir
+    func_fill
+    ;;
 *)
-	echo "Usage: $0 {load|save|backup|restore|erase|reset|fill}"
-	exit 1
-	;;
+    echo "Usage: $0 {load|save|backup|restore|erase|reset|fill}"
+    exit 1
+    ;;
 esac
 
 exit $result
+
+
