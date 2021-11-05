@@ -25,7 +25,7 @@ env:
   TOOLCHAIN_URL: https://github.com/hanwckf/padavan-toolchain/releases/download/v1.1/mipsel-linux-uclibc.tar.xz
   WORK_PATH: /opt/rt-n56u
   TIME_ZONE: Asia/Shanghai
-  TNAME: RM2100
+  TNAME: YK-L1
   FIRMWARE_DATEPREFIX: $(date +"%Y%m%d")
   FIRMWARE_AUTHOR: chongshengB
   FIRMWARE_PATH: /opt/firmwares
@@ -50,10 +50,7 @@ jobs:
         git clone --depth=1 https://github.com/chongshengB/rt-n56u.git /opt/rt-n56u
         cd /opt/rt-n56u/toolchain-mipsel
         sh dl_toolchain.sh
-        mkdir -p /opt/images/
     - name: Build Firmware
-      env:
-        TNAME: YK-L1
       run: |
         cp -r ./config/* /opt/rt-n56u/trunk/user
         cd /opt/rt-n56u/trunk
@@ -116,7 +113,8 @@ jobs:
         #格式如下：
         #sed -i '/自定义项/d' .config
         #echo "自定义项=y" >> .config
-        sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=$(date +"%Y%m%d")/g" ./versions.inc
+        echo "FIRMWARE_DATEPREFIX=$(date +"%Y%m%d")" >> $GITHUB_ENV
+        sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=$(FIRMWARE_DATEPREFIX)/g" ./versions.inc
         echo '更新版本号时间'
         #########################################################################################
     - name: Build firmware
@@ -124,8 +122,6 @@ jobs:
         cd $WORK_PATH/trunk
         sudo ./clear_tree
         sudo ./build_firmware_modify $TNAME 0
-        # sudo mv -f images/*.trx /opt/images/
-        echo "FIRMWARE_DATEPREFIX=$(date +"%Y%m%d")" >> $GITHUB_ENV
     - name: Organize firmware files
       id: organize
       run: |
