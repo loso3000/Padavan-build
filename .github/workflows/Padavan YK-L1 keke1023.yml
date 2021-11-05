@@ -15,7 +15,7 @@ env:
   TOOLCHAIN_URL: https://github.com/hanwckf/padavan-toolchain/releases/download/v1.1/mipsel-linux-uclibc.tar.xz
   WORK_PATH: /opt/rt-n56u
   TIME_ZONE: Asia/Shanghai
-  TARGET_NAME: RM2100
+  TNAME: YK-L1
   FIRMWARE_DATEPREFIX: $(date +"%Y%m%d")
   FIRMWARE_AUTHOR: keke1023
   FIRMWARE_PATH: /opt/firmwares
@@ -44,8 +44,6 @@ jobs:
         tar -xvf mipsel-linux-uclibc.tar.xz -C toolchain-3.4.x
         mkdir -p /opt/images/
     - name: Build Firmware
-      env:
-        TNAME: YK-L1
       run: |
         cp -rf ./hanwckf/* /opt/rt-n56u/trunk/
         cd /opt/rt-n56u/trunk
