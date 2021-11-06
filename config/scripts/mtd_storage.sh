@@ -1,6 +1,5 @@
 #!/bin/sh
 
-Builds="/etc/storage/Builds-2021-11-7"
 result=0
 mtd_part_name="Storage"
 mtd_part_dev="/dev/mtdblock5"
@@ -410,14 +409,14 @@ EOF
 ### \$DNS1     - peer DNS1
 ### \$DNS2     - peer DNS2
 
-# VPN国内外自动分流功能 0关闭；1启动
 vpns=`nvram get vpnc_fw_enable`
 
-# VPN线路流向选择 0出国；1回国
 vpnc_fw_rules=`nvram get vpnc_fw_rules`
 
 #confdir=`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
-
+#if [ -z "$confdir" ] ; then 
+    confdir="/tmp/ss/dnsmasq.d"
+#fi
 [ ! -d "$confdir" ] && mkdir -p $confdir
 
 restart_dhcpd
@@ -430,7 +429,7 @@ peer_msk="255.255.255.0"
 func_ipup()
 {
 logger -t "VPN分流" "VPN已连接!远程IP：$IPREMOTE 本地IP：$IPLOCAL DNS:$DNS1"
-#  route add -net $peer_lan netmask $peer_msk gw $IPREMOTE dev $IFNAME
+#  route add -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
 if [ "$vpns" == "1" ] ; then
 
     logger -t "VPN分流" "VPN连接，准备开始执行分流规则"
@@ -473,9 +472,8 @@ if [ "$vpns" == "1" ] ; then
 
 func_ipdown()
 {
-#  route del -net $peer_lan netmask $peer_msk gw $IPREMOTE dev $IFNAME
-  # if [ "$vpns" == "1" ] ; then
-    
+#  route del -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
+  
     logger -t "VPN分流" "VPN连接断开，准备开始取消分流规则"
     [ -f /tmp/vpnc.lock ] && logger -t "VPN分流" "等待50秒开始脚本"
     I=50
@@ -495,9 +493,7 @@ func_ipdown()
     /tmp/ip-down
     rm -f /tmp/vpnc.lock
     logger -t "VPN分流" "VPN分流规则取消规则完成！"
- #  else
- #    rm -f /tmp/vpnc.lock
- #  fi
+
    return 0
 }
 
