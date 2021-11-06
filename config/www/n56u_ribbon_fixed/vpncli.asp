@@ -428,6 +428,8 @@ function getHash(){
                                             <option value="ru2.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "ru2.foxfly.cf","selected"); %>>ru2</option>
                                             <option value="sg1.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "sg1.foxfly.cf","selected"); %>>sg1</option>
                                             <option value="sg2.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "sg2.foxfly.cf","selected"); %>>sg2</option>
+                                            <option value="us1.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "us1.foxfly.cf","selected"); %>>sg1</option>
+                                            <option value="us2.foxfly.cf" <% nvram_match_x("", "vpnc_peer", "us2.foxfly.cf","selected"); %>>sg2</option>
 										 </select>	
                                         &nbsp;<span id="col_vpnc_state" style="display:none" class="label label-success"><#Connected#></span>
                                     </td>
