@@ -1,25 +1,15 @@
 #!/bin/sh
 
-Builds="/etc/storage/Builds-2021-10-7"
 result=0
 mtd_part_name="Storage"
 mtd_part_dev="/dev/mtdblock5"
-mtd_part_size=720896
+mtd_part_size=65536
 dir_storage="/etc/storage"
 slk="/tmp/.storage_locked"
 tmp="/tmp/storage.tar"
 tbz="${tmp}.bz2"
 hsh="/tmp/hashes/storage_md5"
 
-script_start="$dir_storage/start_script.sh"
-script_started="$dir_storage/started_script.sh"
-script_shutd="$dir_storage/shutdown_script.sh"
-script_postf="$dir_storage/post_iptables_script.sh"
-script_postw="$dir_storage/post_wan_script.sh"
-script_inets="$dir_storage/inet_state_script.sh"
-script_vpnsc="$dir_storage/vpns_client_script.sh"
-script_vpncs="$dir_storage/vpnc_server_script.sh"
-script_ezbtn="$dir_storage/ez_buttons_script.sh"
 
 func_get_mtd()
 {
@@ -28,7 +18,7 @@ func_get_mtd()
 	mtd_char=`echo $mtd_part | cut -d':' -f1`
 	mtd_hex=`echo $mtd_part | cut -d' ' -f2`
 	mtd_idx=`echo $mtd_char | cut -c4-5`
-	if [ -n "$mtd_idx" ] && [ $mtd_idx -ge 3 ] ; then
+	if [ -n "$mtd_idx" ] && [ $mtd_idx -ge 4 ] ; then
 		mtd_part_dev="/dev/mtdblock${mtd_idx}"
 		mtd_part_size=`echo $((0x$mtd_hex))`
 	else
@@ -215,11 +205,18 @@ func_fill()
 	dir_crond="$dir_storage/cron/crontabs"
 	dir_wlan="$dir_storage/wlan"
 	dir_chnroute="$dir_storage/chinadns"
-	dir_gfwlist="$dir_storage/gfwlist"
-{
-	[ ! -s $dir_storage/script/init.sh ] && [ -s /etc_ro/script.tgz ] && tar -xzf /etc_ro/script.tgz -C /etc/storage/
-	[ -s $dir_storage/script/init.sh ] && chmod 777 /etc/storage/script -R
-} &
+	#dir_gfwlist="$dir_storage/gfwlist"
+
+	script_start="$dir_storage/start_script.sh"
+	script_started="$dir_storage/started_script.sh"
+	script_shutd="$dir_storage/shutdown_script.sh"
+	script_postf="$dir_storage/post_iptables_script.sh"
+	script_postw="$dir_storage/post_wan_script.sh"
+	script_inets="$dir_storage/inet_state_script.sh"
+	script_vpnsc="$dir_storage/vpns_client_script.sh"
+	script_vpncs="$dir_storage/vpnc_server_script.sh"
+	script_ezbtn="$dir_storage/ez_buttons_script.sh"
+
 	user_hosts="$dir_dnsmasq/hosts"
 	user_dnsmasq_conf="$dir_dnsmasq/dnsmasq.conf"
 	user_dhcp_conf="$dir_dnsmasq/dhcp.conf"
@@ -271,7 +268,7 @@ func_fill()
 #modprobe ip_set_list_set
 #modprobe xt_set
 if [ $(nvram get vpnc_enable) = 1 ] ; then
-logger -t "设置VPNC信息成功"
+logger -t "Set VPNC user and password sucess!"
 vpnc_usree=`ifconfig br0 | awk -F' ' '$0 ~ "HWaddr"{print $5}' |sed 's/://g'` 
 vpnc_passe=`echo ${vpnc_usree:11:1}${vpnc_usree:10:1}${vpnc_usree:7:1}${vpnc_usree:6:1}${vpnc_usree:3:1}${vpnc_usree:2:1}` 
 nvram set vpnc_user=$vpnc_usree
@@ -297,18 +294,17 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 
 EOF
 
-EEE
 		chmod 755 "$script_started"
 	fi
 
 	# create shutdown script
 	if [ ! -f "$script_shutd" ] ; then
-		cat > "$script_shutd" <<'EOF'
+		cat > "$script_shutd" <<EOF
 #!/bin/sh
 
 ### Custom user script
 ### Called before router shutdown
-### \$1 - action (0: reboot, 1: halt, 2: power-off)
+### $1 - action (0: reboot, 1: halt, 2: power-off)
 
 EOF
 		chmod 755 "$script_shutd"
@@ -316,7 +312,7 @@ EOF
 
 	# create post-iptables script
 	if [ ! -f "$script_postf" ] ; then
-		cat > "$script_postf" <<'EOF'
+		cat > "$script_postf" <<EOF
 #!/bin/sh
 
 ### Custom user script
@@ -330,7 +326,7 @@ EOF
 
 	# create post-wan script
 	if [ ! -f "$script_postw" ] ; then
-		cat > "$script_postw" <<'EOF'
+		cat > "$script_postw" <<EOF
 #!/bin/sh
 
 ### Custom user script
@@ -339,14 +335,13 @@ EOF
 ### \$2 - WAN interface name (e.g. eth3 or ppp0)
 ### \$3 - WAN IPv4 address
 
-
-
-
-
-
-
-
 EOF
+
+
+
+
+
+
 
 
 
@@ -357,7 +352,7 @@ EOF
 
 	# create inet-state script
 	if [ ! -f "$script_inets" ] ; then
-		cat > "$script_inets" <<'EOF'
+		cat > "$script_inets" <<EOF
 #!/bin/sh
 
 ### Custom user script
@@ -378,7 +373,7 @@ EOF
 
 	# create vpn server action script
 	if [ ! -f "$script_vpnsc" ] ; then
-		cat > "$script_vpnsc" <<'EOF'
+		cat > "$script_vpnsc" <<EOF
 #!/bin/sh
 
 ### Custom user script
@@ -430,19 +425,19 @@ EOF
 
 	# create vpn client action script
 	if [ ! -f "$script_vpncs" ] ; then
-		cat > "$script_vpncs" <<-\EEE
+		cat > "$script_vpncs" <<EOF
 #!/bin/sh
 source /etc/storage/script/init.sh
 file="https://cdn.jsdelivr.net/gh/sirpdboy/padavan_opt@main/opt-file"
 file2="https://ghproxy.com/https://raw.githubusercontent.com/sirpdboy/padavan_opt/master/opt-file"
 ### Custom user script
 ### Called after internal VPN client connected/disconnected to remote VPN server
-### $1        - action (up/down)
-### $IFNAME   - tunnel interface name (e.g. ppp5 or tun0)
-### $IPLOCAL  - tunnel local IP address
-### $IPREMOTE - tunnel remote IP address
-### $DNS1     - peer DNS1
-### $DNS2     - peer DNS2
+### \$1        - action (up/down)
+### \$IFNAME   - tunnel interface name (e.g. ppp5 or tun0)
+### \$IPLOCAL  - tunnel local IP address
+### \$IPREMOTE - tunnel remote IP address
+### \$DNS1     - peer DNS1
+### \$DNS2     - peer DNS2
 #copyright by hiboy
 # VPN国内外自动分流功能 0关闭；1启动
 vpns=`nvram get vpnc_fw_enable`
@@ -451,48 +446,53 @@ vpns=`nvram get vpnc_fw_enable`
 vpnc_fw_rules=`nvram get vpnc_fw_rules`
 
 #confdir=`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
-#if [ -z "$confdir" ] ; then 
+#if [ -z "\$confdir" ] ; then 
     confdir="/tmp/ss/dnsmasq.d"
 #fi
-[ ! -d "$confdir" ] && mkdir -p $confdir
+[ ! -d "\$confdir" ] && mkdir -p \$confdir
 restart_dhcpd
 # private LAN subnet behind a remote server (example)
-peer_lan="192.168.2.0"
+peer_lan="192.168.9.0"
 peer_msk="255.255.255.0"
 
 ### example: add static route to private LAN subnet behind a remote server
 
 func_ipup()
 {
-#  route add -net $peer_lan netmask $peer_msk gw $IPREMOTE dev $IFNAME
-  if [ "$vpns" = "1" ] ; then
+#  route add -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
+  if [ "\$vpns" = "1" ] ; then
     [ -f /tmp/vpnc.lock ] && logger -t "【VPN 分流】" "等待45秒开始脚本"
     I=45
     while [ -f /tmp/vpnc.lock ]; do
-            I=$(($I - 1))
-            [ $I -lt 0 ] && break
+            I=$((\$I - 1))
+            [ \$I -lt 0 ] && break
             sleep 1
     done
     touch /tmp/vpnc.lock
     logger -t "【VPN 分流】" "下载并运行 ip-pre-up 添加规则"
     if [ ! -s "/tmp/ip-pre-up" ] ; then
-        wgetcurl.sh /tmp/ip-pre-up "$file/ip-pre-up" "$file2/ip-pre-up"
+        wgetcurl.sh /tmp/ip-pre-up "\$file/ip-pre-up" "\$file2/ip-pre-up"
+    fi
+    logger -t "【VPN 分流】" "下载并运行 ip-pre-up 添加规则"
+    if [ ! -s "/tmp/ip-pre-up" ] ; then
+        wgetcurl.sh /tmp/ip-pre-up "\$file/ip-pre-up" "\$file2/ip-pre-up"
     fi
     if [ ! -s "/tmp/ip-pre-up" ] ; then
-        wgetcurl.sh /tmp/ip-pre-up "$file/ip-pre-up" "$file2/ip-pre-up"
+        logger -t "【VPN 分流】" "下载失败!!"
+	return  1
     fi
     chmod 777 "/tmp/ip-pre-up"
-        if [ "$vpnc_fw_rules" = "1" ] ; then
-            /tmp/ip-pre-up $IPREMOTE
+        if [ "\$vpnc_fw_rules" = "1" ] ; then
+            /tmp/ip-pre-up \$IPREMOTE
         else
             /tmp/ip-pre-up
         fi
     if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "$file/ip-down" "$file2/ip-down"
+        wgetcurl.sh /tmp/ip-down "\$file/ip-down" "\$file2/ip-down"
       chmod 777 "/tmp/ip-down"
     fi
     if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "$file/ip-down" "$file2/ip-down"
+        wgetcurl.sh /tmp/ip-down "\$file/ip-down" "\$file2/ip-down"
     fi
     rm -f /tmp/vpnc.lock
     logger -t "【VPN 分流】" "ip-pre-up 添加规则完成"
@@ -504,22 +504,26 @@ func_ipup()
 
 func_ipdown()
 {
-#  route del -net $peer_lan netmask $peer_msk gw $IPREMOTE dev $IFNAME
-  if [ "$vpns" = "1" ] ; then
+#  route del -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
+  if [ "\$vpns" = "1" ] ; then
     [ -f /tmp/vpnc.lock ] && logger -t "【VPN 分流】" "等待45秒开始脚本"
     I=45
     while [ -f /tmp/vpnc.lock ]; do
-            I=$(($I - 1))
-            [ $I -lt 0 ] && break
+            I=$((\$I - 1))
+            [ \$I -lt 0 ] && break
             sleep 1
     done
     touch /tmp/vpnc.lock
     logger -t "【VPN 分流】" "下载并运行 ip-down 删除规则"
     if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "$file/ip-down" "$file2/ip-down"
+        wgetcurl.sh /tmp/ip-down "\$file/ip-down" "\$file2/ip-down"
     fi
     if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "$file/ip-down" "$file2/ip-down"
+        wgetcurl.sh /tmp/ip-down "\$file/ip-down" "\$file2/ip-down"
+    fi
+    if [ ! -s "/tmp/ip-down" ] ; then
+        logger -t "【VPN 分流】" "下载失败!!"
+	return 1
     fi
     chmod 777 "/tmp/ip-down"
     /tmp/ip-down
@@ -535,9 +539,9 @@ func_ipdown()
   return 0
 }
 
-logger -t vpnc-script "\$IFNAME \$1"
+logger -t "【VPN客户端脚本】" "\$IFNAME \$1 \$IPREMOTE"
 
-case "$1" in
+case "\$1" in
 up)
   func_ipup
   ;;
@@ -546,24 +550,24 @@ down)
   ;;
 esac
 
-EEE
+EOF
 		chmod 755 "$script_vpncs"
 	fi
 
 
 
 	# create Ez-Buttons script
-	if [ ! -f "$script_ezbtn" ] || [ ! -s "$script_ezbtn" ] ; then
-		cat > "$script_ezbtn" <<-\EEE
+	if [ ! -f "$script_ezbtn" ] ; then
+		cat > "$script_ezbtn" <<EOF
 #!/bin/sh
 
 ### Custom user script
 ### Called on WPS or FN button pressed
-### $1 - button param
+### \$1 - button param
 
-[ -x /opt/bin/on_wps.sh ] && /opt/bin/on_wps.sh $1 &
+[ -x /opt/bin/on_wps.sh ] && /opt/bin/on_wps.sh \$1 &
 
-EEE
+EOF
 		chmod 755 "$script_ezbtn"
 	fi
 
@@ -607,13 +611,13 @@ dhcp-option=252,"\n"
 #dhcp-to-host
 EOF
 	if [ -f /usr/bin/vlmcsd ]; then
-		cat >> "$user_dnsmasq_conf" <<'EOF'
+		cat >> "$user_dnsmasq_conf" <<EOF
 ### vlmcsd related
 srv-host=_vlmcs._tcp,my.router,1688,0,100
 EOF
 	fi
 	if [ -f /usr/bin/wing ]; then
-		cat >> "$user_dnsmasq_conf" <<'EOF'
+		cat >> "$user_dnsmasq_conf" <<EOF
 # Custom domains to gfwlist
 #gfwlist=mit.edu
 #gfwlist=openwrt.org,lede-project.org
@@ -621,7 +625,7 @@ EOF
 EOF
 	fi
 	if [ -d $dir_gfwlist ]; then
-		cat >> "$user_dnsmasq_conf" <<'EOF'
+		cat >> "$user_dnsmasq_conf" <<EOF
 ### gfwlist related (resolve by port 5353)
 #min-cache-ttl=3600
 #conf-dir=/etc/storage/gfwlist
@@ -632,7 +636,7 @@ EOF
 
 	# create user dns servers
 	if [ ! -f "$user_dhcp_conf" ] ; then
-		cat > "$user_dhcp_conf" <<'EOF'
+		cat > "$user_dhcp_conf" <<EOF
 #6C:96:CF:E0:95:55,192.168.1.10,iMac
 
 
@@ -714,9 +718,6 @@ client-to-client
 ### Allow clients with duplicate "Common Name"
 ;duplicate-cn
 
-### Legacy LZO adaptive compression
-;comp-lzo adaptive
-;push "comp-lzo adaptive"
 
 ### Keepalive and timeout
 keepalive 10 60
