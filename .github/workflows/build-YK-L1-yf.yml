@@ -8,7 +8,7 @@ on:
       firmwarever:
         description: 'firmware''s version'
         required: true
-        default: '20201015'
+        default: '20211025'
       mobileui:
         description: 'whether to apply mobile ui patch for original ui'
         required: false
@@ -114,7 +114,7 @@ jobs:
         #sed -i '/自定义项/d' .config
         #echo "自定义项=y" >> .config
         echo "FIRMWARE_DATEPREFIX=$(date +"%Y%m%d")" >> $GITHUB_ENV
-        sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=${FIRMWARE_DATEPREFIX}/g" ./versions.inc
+        sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=20211025/g" ./versions.inc
         echo '更新版本号时间'
         #########################################################################################
     - name: Build firmware
