@@ -35,7 +35,7 @@ jobs:
         cp -rf ./config/shared/* /opt/rt-n56u/trunk/user/shared
         cp -rf ./config/www/* /opt/rt-n56u/trunk/user/www
         #cp -rf ./config/* /opt/rt-n56u/trunk/user
-        #cd /opt/rt-n56u/toolchain-mipsel
+        cd /opt/rt-n56u/toolchain-mipsel
         sh dl_toolchain.sh
         mkdir -p /opt/images/
     - name: Build Firmware
