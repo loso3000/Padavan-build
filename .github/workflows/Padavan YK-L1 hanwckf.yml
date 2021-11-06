@@ -38,10 +38,9 @@ jobs:
     - name: Clone source code
       run: |
         git clone --depth=1 https://github.com/hanwckf/rt-n56u.git /opt/rt-n56u
-        cd $WORK_PATH/toolchain-mipsel
-        mkdir -p toolchain-3.4.x
-        wget $TOOLCHAIN_URL
-        tar -xvf mipsel-linux-uclibc.tar.xz -C toolchain-3.4.x
+        
+        cd /opt/rt-n56u/toolchain-mipsel
+        sh dl_toolchain.sh
         mkdir -p /opt/images/
     - name: Build Firmware
       run: |
@@ -100,6 +99,7 @@ jobs:
         #自定义添加其它功能请参考源码configs/templates/目录下的config文件。按照上面的格式添加即可
         #格式如下：
         #sed -i '/自定义项/d' .config
+        sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=20211025/g" ./versions.inc
         #echo "自定义项=y" >> .config
         #########################################################################################
         sudo ./clear_tree
