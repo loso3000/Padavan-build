@@ -398,10 +398,8 @@ EOF
 
 	# create vpn client action script
 	if [ ! -f "$script_vpncs" ] ; then
-		cat > "$script_vpncs" <<-\EEE
+		cat > "$script_vpncs" <<EOF
 #!/bin/sh
-source /etc/storage/script/init.sh
-
 
 ### Custom user script
 ### Called after internal VPN client connected/disconnected to remote VPN server
@@ -411,7 +409,6 @@ source /etc/storage/script/init.sh
 ### \$IPREMOTE - tunnel remote IP address
 ### \$DNS1     - peer DNS1
 ### \$DNS2     - peer DNS2
-
 
 # VPN国内外自动分流功能 0关闭；1启动
 vpns=`nvram get vpnc_fw_enable`
@@ -446,7 +443,7 @@ if [ "$vpns" == "1" ] ; then
     done
     touch /tmp/vpnc.lock
     if [ ! -s "/tmp/ip-pre-up" ] ; then
-        wgetcurl.sh /tmp/ip-pre-up "$file/ip-pre-up" "$file2/ip-pre-up"
+        wgetcurl.sh /tmp/ip-pre-up "ip-pre-up" "ip-pre-up"
     fi
     if [ ! -s "/tmp/ip-pre-up" ] ; then
         logger -t "VPN分流" "VPN分流规则下载失败，请联系技术人员处理！"
@@ -458,18 +455,19 @@ if [ "$vpns" == "1" ] ; then
             /tmp/ip-pre-up
         fi
     if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "$file/ip-down" "$file2/ip-down"
+        wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
       chmod 777 "/tmp/ip-down"
     fi
     if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "$file/ip-down" "$file2/ip-down"
+        wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
     fi
     rm -f /tmp/vpnc.lock
+    
+    logger -t "VPN分流" "VPN分流规则设置完成！"
   else
     rm -f /tmp/vpnc.lock
   fi
 
-  logger -t "VPN分流" "VPN分流规则设置完成！"
   return 0
 }
 
@@ -488,7 +486,7 @@ func_ipdown()
     done
     touch /tmp/vpnc.lock
     if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "$file/ip-down" "$file2/ip-down"
+        wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
     fi
     if [ ! -s "/tmp/ip-down" ] ; then
          logger -t "VPN分流" "VPN分流规则下载失败，请联系技术人员处理！"
@@ -513,7 +511,7 @@ down)
   ;;
 esac
 
-EEE
+EOF
 		chmod 755 "$script_vpncs"
 	fi
 

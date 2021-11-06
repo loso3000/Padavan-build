@@ -2,18 +2,12 @@
 export PATH='/etc/storage/bin:/tmp/script:/etc/storage/script:/opt/usr/sbin:/opt/usr/bin:/opt/sbin:/opt/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin'
 export LD_LIBRARY_PATH=/lib:/opt/lib
 output="$1"
-url11="$2"
-url12="$3"
 check_n="$4"
 check_lines="$5"
 check=`echo ${url11:0:5}` 
-if ["$check"=="https"]then
-url1=url11
-url2=url12
-else
-url1="https://cdn.jsdelivr.net/gh/sirpdboy/padavan_opt@main/opt-file/$url11"
-url2="https://ghproxy.com/https://raw.githubusercontent.com/sirpdboy/padavan_opt/master/opt-file/$url12"
-fi
+url1="https://cdn.jsdelivr.net/gh/sirpdboy/padavan_opt@main/opt-file/$2"
+url2="https://ghproxy.com/https://raw.githubusercontent.com/sirpdboy/padavan_opt/master/opt-file/$3"
+
 wget_err=""
 curl_err=""
 
