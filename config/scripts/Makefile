@@ -25,9 +25,6 @@ endif
 	$(ROMFSINST) /etc_ro/shells
 	$(ROMFSINST) /etc_ro/mdev.conf
 	$(ROMFSINST) /etc_ro/banner
-	$(ROMFSINST) /etc_ro/script.tgz
 	mkdir -p $(INSTALLDIR)/usr/share/terminfo
 	tar -xzf ./terminfo.tar.gz -C $(INSTALLDIR)/usr/share
-	mkdir -p $(INSTALLDIR)/etc/storage/
-	tar -xzf $(THISDIR)/script.tgz -C $(INSTALLDIR)/etc/storage/
 	$(ROMFSINST) /sbin/check_crontab.sh

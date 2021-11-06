@@ -409,14 +409,14 @@ EOF
 ### \$DNS1     - peer DNS1
 ### \$DNS2     - peer DNS2
 
+logger -t "[VPN SHUNT]" "The rule script starts executing��$IFNAME $1  "
+
 vpns=`nvram get vpnc_fw_enable`
 
 vpnc_fw_rules=`nvram get vpnc_fw_rules`
 
 #confdir=`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
-#if [ -z "$confdir" ] ; then 
-    confdir="/tmp/ss/dnsmasq.d"
-#fi
+
 [ ! -d "$confdir" ] && mkdir -p $confdir
 
 restart_dhcpd
@@ -428,12 +428,12 @@ peer_msk="255.255.255.0"
 
 func_ipup()
 {
-logger -t "VPN分流" "VPN已连接!远程IP：$IPREMOTE 本地IP：$IPLOCAL DNS:$DNS1"
-#  route add -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
+logger -t "[VPN SHUNT]" "VPN connection! IPREMOTE��$IPREMOTE  IPLOCAL��$IPLOCAL  DNS:$DNS1"
+#  route add -net $peer_lan netmask $peer_msk gw $IPREMOTE dev $IFNAME
 if [ "$vpns" == "1" ] ; then
 
-    logger -t "VPN分流" "VPN连接，准备开始执行分流规则"
-    [ -f /tmp/vpnc.lock ] && logger -t "VPN分流" "等待120秒开始脚本"
+    logger -t "[VPN SHUNT]" "VPN connection��Ready to start streaming rules"
+    [ -f /tmp/vpnc.lock ] && logger -t "[VPN SHUNT]" "Wait 120 seconds to start the script"
     I=120
     while [ -f /tmp/vpnc.lock ]; do
             I=$(($I - 1))
@@ -445,7 +445,7 @@ if [ "$vpns" == "1" ] ; then
         wgetcurl.sh /tmp/ip-pre-up "ip-pre-up" "ip-pre-up"
     fi
     if [ ! -s "/tmp/ip-pre-up" ] ; then
-        logger -t "VPN分流" "VPN分流规则下载失败，请联系技术人员处理！"
+        logger -t "[VPN SHUNT]" "Rule download failed, please contact technical personnel for handling!"
     fi
     chmod 777 "/tmp/ip-pre-up"
         if [ "$vpnc_fw_rules" == "1" ] ; then
@@ -461,22 +461,21 @@ if [ "$vpns" == "1" ] ; then
         wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
     fi
     rm -f /tmp/vpnc.lock
-    
-    logger -t "VPN分流" "VPN分流规则设置完成！"
   else
     rm -f /tmp/vpnc.lock
   fi
 
+  logger -t "[VPN SHUNT]" "Rule setting completed!"
   return 0
 }
 
 func_ipdown()
 {
-#  route del -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
-  
-    logger -t "VPN分流" "VPN连接断开，准备开始取消分流规则"
-    [ -f /tmp/vpnc.lock ] && logger -t "VPN分流" "等待50秒开始脚本"
-    I=50
+#  route del -net $peer_lan netmask $peer_msk gw $IPREMOTE dev $IFNAME
+
+    logger -t "[VPN SHUNT]" "VPN Disconnect, ready to start canceling the shunting rule"
+    [ -f /tmp/vpnc.lock ] && logger -t  "[VPN SHUNT]" "Wait 60 seconds to start the script"
+    I=60
     while [ -f /tmp/vpnc.lock ]; do
             I=$(($I - 1))
             [ $I -lt 0 ] && break
@@ -487,18 +486,17 @@ func_ipdown()
         wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
     fi
     if [ ! -s "/tmp/ip-down" ] ; then
-         logger -t "VPN分流" "VPN分流规则下载失败，请联系技术人员处理！"
+        logger -t "[VPN SHUNT]" "Rule download failed, please contact technical personnel for handling!"
     fi
     chmod 777 "/tmp/ip-down"
     /tmp/ip-down
     rm -f /tmp/vpnc.lock
-    logger -t "VPN分流" "VPN分流规则取消规则完成！"
-
+    logger -t "[VPN SHUNT]" "Rule cancel rule complete!"
    return 0
 }
 
-logger -t "VPN分流" "VPN分流规则脚本开始执行：$IFNAME $1  "
 case "$1" in
+
 up)
   func_ipup
   ;;
