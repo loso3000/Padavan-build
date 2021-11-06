@@ -10,7 +10,6 @@ tmp="/tmp/storage.tar"
 tbz="${tmp}.bz2"
 hsh="/tmp/hashes/storage_md5"
 
-
 func_get_mtd()
 {
 	local mtd_part mtd_char mtd_idx mtd_hex
@@ -78,6 +77,7 @@ func_save()
 {
 	local fsz
 
+	logger -t "Storage save" "Save storage files to MTD partition \"$mtd_part_dev\""
 	echo "Save storage files to MTD partition \"$mtd_part_dev\""
 	rm -f $tbz
 	md5sum -c -s $hsh 2>/dev/null
@@ -93,6 +93,7 @@ func_save()
 		mtd_write write $tbz $mtd_part_name
 		if [ $? -eq 0 ] ; then
 			echo "Done."
+			logger -t "Storage save" "Done."
 		else
 			result=1
 			echo "Error! MTD write FAILED"
@@ -102,7 +103,6 @@ func_save()
 		result=1
 		echo "Error! Invalid storage final data size: $fsz"
 		logger -t "Storage save" "Invalid storage final data size: $fsz"
-		[ $fsz -gt $mtd_part_size ] && logger -t "Storage save" "Storage using data size: $fsz > flash partition size: $mtd_part_size"
 	fi
 	rm -f $tmp
 	rm -f $tbz
@@ -184,17 +184,8 @@ func_reset()
 	mkdir -p -m 755 $dir_storage
 }
 
-
-		
-		
-
-
-	
-
-
 func_fill()
 {
-
 	dir_httpssl="$dir_storage/https"
 	dir_dnsmasq="$dir_storage/dnsmasq"
 	dir_ovpnsvr="$dir_storage/openvpn/server"
@@ -226,6 +217,7 @@ func_fill()
 	user_sswan_conf="$dir_sswan/strongswan.conf"
 	user_sswan_ipsec_conf="$dir_sswan/ipsec.conf"
 	user_sswan_secrets="$dir_sswan/ipsec.secrets"
+	
 	chnroute_file="/etc_ro/chnroute.bz2"
 	#gfwlist_conf_file="/etc_ro/gfwlist.bz2"
 
@@ -241,12 +233,14 @@ func_fill()
 			mkdir -p "$dir_chnroute" && tar jxf "$chnroute_file" -C "$dir_chnroute"
 		fi
 	fi
+
 	# create gfwlist
 	#if [ ! -d "$dir_gfwlist" ] ; then
 	#	if [ -f "$gfwlist_conf_file" ]; then	
 #			mkdir -p "$dir_gfwlist" && tar jxf "$gfwlist_conf_file" -C "$dir_gfwlist"
 	#	fi
 #	fi
+
 	# create start script
 	if [ ! -f "$script_start" ] ; then
 		reset_ss.sh -a
@@ -267,13 +261,7 @@ func_fill()
 #modprobe ip_set_bitmap_ip
 #modprobe ip_set_list_set
 #modprobe xt_set
-if [ $(nvram get vpnc_enable) = 1 ] ; then
-logger -t "Set VPNC user and password sucess!"
-vpnc_usree=`ifconfig br0 | awk -F' ' '$0 ~ "HWaddr"{print $5}' |sed 's/://g'` 
-vpnc_passe=`echo ${vpnc_usree:11:1}${vpnc_usree:10:1}${vpnc_usree:7:1}${vpnc_usree:6:1}${vpnc_usree:3:1}${vpnc_usree:2:1}` 
-nvram set vpnc_user=$vpnc_usree
-nvram set vpnc_pass=$vpnc_passe
-fi
+
 #drop caches
 sync && echo 3 > /proc/sys/vm/drop_caches
 
@@ -293,7 +281,6 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 
 
 EOF
-
 		chmod 755 "$script_started"
 	fi
 
@@ -304,13 +291,14 @@ EOF
 
 ### Custom user script
 ### Called before router shutdown
-### $1 - action (0: reboot, 1: halt, 2: power-off)
+### \$1 - action (0: reboot, 1: halt, 2: power-off)
 
 EOF
 		chmod 755 "$script_shutd"
 	fi
 
 	# create post-iptables script
+
 	if [ ! -f "$script_postf" ] ; then
 		cat > "$script_postf" <<EOF
 #!/bin/sh
@@ -336,19 +324,8 @@ EOF
 ### \$3 - WAN IPv4 address
 
 EOF
-
-
-
-
-
-
-
-
-
-
 		chmod 755 "$script_postw"
 	fi
-
 
 	# create inet-state script
 	if [ ! -f "$script_inets" ] ; then
@@ -360,14 +337,9 @@ EOF
 ### \$1 - Internet status (0/1)
 ### \$2 - elapsed time (s) from previous state
 
-logger -t "【网络检测】" "互联网状态:$1, 经过时间:$2s."
+logger -t "di" "Internet state: \$1, elapsed time: \$2s."
 
 EOF
-
-
-      
-      
-
 		chmod 755 "$script_inets"
 	fi
 
@@ -427,9 +399,7 @@ EOF
 	if [ ! -f "$script_vpncs" ] ; then
 		cat > "$script_vpncs" <<EOF
 #!/bin/sh
-source /etc/storage/script/init.sh
-file="https://cdn.jsdelivr.net/gh/sirpdboy/padavan_opt@main/opt-file"
-file2="https://ghproxy.com/https://raw.githubusercontent.com/sirpdboy/padavan_opt/master/opt-file"
+
 ### Custom user script
 ### Called after internal VPN client connected/disconnected to remote VPN server
 ### \$1        - action (up/down)
@@ -438,19 +408,7 @@ file2="https://ghproxy.com/https://raw.githubusercontent.com/sirpdboy/padavan_op
 ### \$IPREMOTE - tunnel remote IP address
 ### \$DNS1     - peer DNS1
 ### \$DNS2     - peer DNS2
-#copyright by hiboy
-# VPN国内外自动分流功能 0关闭；1启动
-vpns=`nvram get vpnc_fw_enable`
 
-# VPN线路流向选择 0出国；1回国
-vpnc_fw_rules=`nvram get vpnc_fw_rules`
-
-#confdir=`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
-#if [ -z "\$confdir" ] ; then 
-    confdir="/tmp/ss/dnsmasq.d"
-#fi
-[ ! -d "\$confdir" ] && mkdir -p \$confdir
-restart_dhcpd
 # private LAN subnet behind a remote server (example)
 peer_lan="192.168.9.0"
 peer_msk="255.255.255.0"
@@ -460,86 +418,16 @@ peer_msk="255.255.255.0"
 func_ipup()
 {
 #  route add -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
-  if [ "\$vpns" = "1" ] ; then
-    [ -f /tmp/vpnc.lock ] && logger -t "【VPN 分流】" "等待45秒开始脚本"
-    I=45
-    while [ -f /tmp/vpnc.lock ]; do
-            I=$((\$I - 1))
-            [ \$I -lt 0 ] && break
-            sleep 1
-    done
-    touch /tmp/vpnc.lock
-    logger -t "【VPN 分流】" "下载并运行 ip-pre-up 添加规则"
-    if [ ! -s "/tmp/ip-pre-up" ] ; then
-        wgetcurl.sh /tmp/ip-pre-up "\$file/ip-pre-up" "\$file2/ip-pre-up"
-    fi
-    logger -t "【VPN 分流】" "下载并运行 ip-pre-up 添加规则"
-    if [ ! -s "/tmp/ip-pre-up" ] ; then
-        wgetcurl.sh /tmp/ip-pre-up "\$file/ip-pre-up" "\$file2/ip-pre-up"
-    fi
-    if [ ! -s "/tmp/ip-pre-up" ] ; then
-        logger -t "【VPN 分流】" "下载失败!!"
-	return  1
-    fi
-    chmod 777 "/tmp/ip-pre-up"
-        if [ "\$vpnc_fw_rules" = "1" ] ; then
-            /tmp/ip-pre-up \$IPREMOTE
-        else
-            /tmp/ip-pre-up
-        fi
-    if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "\$file/ip-down" "\$file2/ip-down"
-      chmod 777 "/tmp/ip-down"
-    fi
-    if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "\$file/ip-down" "\$file2/ip-down"
-    fi
-    rm -f /tmp/vpnc.lock
-    logger -t "【VPN 分流】" "ip-pre-up 添加规则完成"
-  else
-    rm -f /tmp/vpnc.lock
-  fi
-  return 0
+   return 0
 }
 
 func_ipdown()
 {
 #  route del -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
-  if [ "\$vpns" = "1" ] ; then
-    [ -f /tmp/vpnc.lock ] && logger -t "【VPN 分流】" "等待45秒开始脚本"
-    I=45
-    while [ -f /tmp/vpnc.lock ]; do
-            I=$((\$I - 1))
-            [ \$I -lt 0 ] && break
-            sleep 1
-    done
-    touch /tmp/vpnc.lock
-    logger -t "【VPN 分流】" "下载并运行 ip-down 删除规则"
-    if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "\$file/ip-down" "\$file2/ip-down"
-    fi
-    if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "\$file/ip-down" "\$file2/ip-down"
-    fi
-    if [ ! -s "/tmp/ip-down" ] ; then
-        logger -t "【VPN 分流】" "下载失败!!"
-	return 1
-    fi
-    chmod 777 "/tmp/ip-down"
-    /tmp/ip-down
-    #if [ -s "/tmp/ip-pre-up" ] ; then
-    #  rm -f /tmp/ip-pre-up
-    #  rm -f /tmp/ip-down
-    #fi
-    rm -f /tmp/vpnc.lock
-    #logger -t "【VPN 分流】" "ip-down 删除规则完成"
-  else
-    rm -f /tmp/vpnc.lock
-  fi
-  return 0
+   return 0
 }
 
-logger -t "【VPN客户端脚本】" "\$IFNAME \$1 \$IPREMOTE"
+logger -t vpnc-script "\$IFNAME \$1"
 
 case "\$1" in
 up)
@@ -553,8 +441,6 @@ esac
 EOF
 		chmod 755 "$script_vpncs"
 	fi
-
-
 
 	# create Ez-Buttons script
 	if [ ! -f "$script_ezbtn" ] ; then
@@ -609,26 +495,32 @@ dhcp-option=252,"\n"
 
 ### Keep DHCP host name valid at any times
 #dhcp-to-host
+
 EOF
 	if [ -f /usr/bin/vlmcsd ]; then
 		cat >> "$user_dnsmasq_conf" <<EOF
 ### vlmcsd related
 srv-host=_vlmcs._tcp,my.router,1688,0,100
+
 EOF
 	fi
+
 	if [ -f /usr/bin/wing ]; then
 		cat >> "$user_dnsmasq_conf" <<EOF
 # Custom domains to gfwlist
 #gfwlist=mit.edu
 #gfwlist=openwrt.org,lede-project.org
 #gfwlist=github.com,github.io,githubusercontent.com
+
 EOF
 	fi
+
 	if [ -d $dir_gfwlist ]; then
 		cat >> "$user_dnsmasq_conf" <<EOF
 ### gfwlist related (resolve by port 5353)
 #min-cache-ttl=3600
 #conf-dir=/etc/storage/gfwlist
+
 EOF
 	fi
 		chmod 644 "$user_dnsmasq_conf"
@@ -638,8 +530,6 @@ EOF
 	if [ ! -f "$user_dhcp_conf" ] ; then
 		cat > "$user_dhcp_conf" <<EOF
 #6C:96:CF:E0:95:55,192.168.1.10,iMac
-
-
 
 EOF
 		chmod 644 "$user_dhcp_conf"
@@ -718,7 +608,6 @@ client-to-client
 ### Allow clients with duplicate "Common Name"
 ;duplicate-cn
 
-
 ### Keepalive and timeout
 keepalive 10 60
 
@@ -783,118 +672,48 @@ EOF
 			chmod 644 "$user_sswan_secrets"
 		fi
 	fi
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 case "$1" in
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 load)
-    func_get_mtd
-    func_mdir
-    func_load
-    ;;
+	func_get_mtd
+	func_mdir
+	func_load
+	;;
 save)
-    [ -f "$slk" ] && exit 1
-    func_get_mtd
-    func_mdir
-    func_tarb
-    func_save
-    ;;
+	[ -f "$slk" ] && exit 1
+	func_get_mtd
+	func_mdir
+	func_tarb
+	func_save
+	;;
 backup)
-    func_mdir
-    func_tarb
-    func_backup
-    ;;
+	func_mdir
+	func_tarb
+	func_backup
+	;;
 restore)
-    func_get_mtd
-    func_restore
-    ;;
+	func_get_mtd
+	func_restore
+	;;
 erase)
-    func_get_mtd
-    func_erase
-    ;;
+	func_get_mtd
+	func_erase
+	;;
 reset)
-    func_stop_apps
-    func_reset
-    func_fill
-    func_start_apps
-    ;;
+	func_stop_apps
+	func_reset
+	func_fill
+	func_start_apps
+	;;
 fill)
-    func_mdir
-    func_fill
-    ;;
+	func_mdir
+	func_fill
+	;;
 *)
-    echo "Usage: $0 {load|save|backup|restore|erase|reset|fill}"
-    exit 1
-    ;;
+	echo "Usage: $0 {load|save|backup|restore|erase|reset|fill}"
+	exit 1
+	;;
 esac
 
 exit $result
-
-
