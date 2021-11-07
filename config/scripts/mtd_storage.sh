@@ -412,12 +412,12 @@ EOF
 logger -t "[VPN SHUNT]" "The rule script starts executing: \$IFNAME \$1  "
 
 # VPN automatic shunting function at home and abroad is 0 turned off; 1 start
-vpns=\`nvram get vpnc_fw_enable`
+vpns=`nvram get vpnc_fw_enable`
 
 # VPN line flow direction selection 0; 1 return home
-vpnc_fw_rules=\`nvram get vpnc_fw_rules`
+vpnc_fw_rules=`nvram get vpnc_fw_rules`
 
-#confdir=\`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
+#confdir=`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
 #if [ -z \$confdir ] ; then 
     confdir="/tmp/ss/dnsmasq.d"
 #fi
