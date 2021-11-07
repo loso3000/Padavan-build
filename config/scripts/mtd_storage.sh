@@ -409,11 +409,15 @@ EOF
 ### \$DNS1     - peer DNS1
 ### \$DNS2     - peer DNS2
 
-logger -t "[VPN SHUNT]" "The rule script starts executing $IFNAME $1  "
-vpns=`nvram get vpnc_fw_enable`
-vpnc_fw_rules=`nvram get vpnc_fw_rules`
+logger -t "[VPN SHUNT]" "The rule script starts executing: \$IFNAME \$1  "
 
-#confdir=`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
+# VPN automatic shunting function at home and abroad is 0 turned off; 1 start
+vpns=\`nvram get vpnc_fw_enable`
+
+# VPN line flow direction selection 0; 1 return home
+vpnc_fw_rules=\`nvram get vpnc_fw_rules`
+
+#confdir=\`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
 #if [ -z \$confdir ] ; then 
     confdir="/tmp/ss/dnsmasq.d"
 #fi
@@ -427,9 +431,10 @@ peer_msk="255.255.255.0"
 
 func_ipup()
 {
-logger -t "[VPN SHUNT]" "VPN connection! IPREMOTE: $IPREMOTE  IPLOCAL:IPLOCAL  DNS:$DNS1"
+logger -t "[VPN SHUNT]" "VPN connection! IPREMOTE: \$IPREMOTE  IPLOCAL:\$IPLOCAL  DNS:\$DNS1"
+
 #  route add -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
-if [ \$vpns == "1" ] ; then
+if [ "\$vpns" == "1" ] ; then
     logger -t "[VPN SHUNT]" "VPN connection Ready to start streaming rules"
     [ -f /tmp/vpnc.lock ] && logger -t "[VPN SHUNT]" "Wait 120 seconds to start the script"
     I=120
@@ -444,10 +449,11 @@ if [ \$vpns == "1" ] ; then
     fi
     if [ ! -s "/tmp/ip-pre-up" ] ; then
         logger -t "[VPN SHUNT]" "Rule download failed, please contact technical personnel for handling!"
+	return 1
     fi
     chmod 777 "/tmp/ip-pre-up"
         if [ \$vpnc_fw_rules == "1" ] ; then
-            /tmp/ip-pre-up $IPREMOTE
+            /tmp/ip-pre-up \$IPREMOTE
         else
             /tmp/ip-pre-up
         fi
@@ -459,6 +465,7 @@ if [ \$vpns == "1" ] ; then
         wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
     fi
     rm -f /tmp/vpnc.lock
+    logger -t "[VPN SHUNT]"  "Rule SHUNT rule complete!"
   else
     rm -f /tmp/vpnc.lock
   fi
@@ -472,7 +479,7 @@ func_ipdown()
     [ -f /tmp/vpnc.lock ] && logger -t  "[VPN SHUNT]" "Wait 60 seconds to start the script"
     I=60
     while [ -f /tmp/vpnc.lock ]; do
-            I\$((\$I - 1))
+            I=\$((\$I - 1))
             [ \$I -lt 0 ] && break
             sleep 1
     done
@@ -482,6 +489,7 @@ func_ipdown()
     fi
     if [ ! -s "/tmp/ip-down" ] ; then
         logger -t "[VPN SHUNT]" "Rule download failed, please contact technical personnel for handling!"
+	return 1
     fi
     chmod 777 "/tmp/ip-down"
     /tmp/ip-down
@@ -489,8 +497,6 @@ func_ipdown()
     logger -t "[VPN SHUNT]" "Rule cancel rule complete!"
    return 0
 }
-
-logger -t vpnc-script "\$IFNAME \$1"
 
 case "\$1" in
 up)
