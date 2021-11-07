@@ -53,7 +53,7 @@ jobs:
     - name: Build Firmware
       run: |
         cp -r ./config/* /opt/rt-n56u/trunk/user
-        cp -r ./hanwckf/configs/boards/YK-L1/* /opt/rt-n56u/trunk/configs/boards/YK-L1
+        # cp -r ./hanwckf/configs/boards/YK-L1/* /opt/rt-n56u/trunk/configs/boards/YK-L1
         cd /opt/rt-n56u/trunk
         if [ ! -f configs/templates/$TNAME.config ] ; then
         echo "configs/templates/$TNAME.config not found "
