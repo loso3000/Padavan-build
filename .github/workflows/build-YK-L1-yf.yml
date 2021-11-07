@@ -84,11 +84,19 @@ jobs:
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config 
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL/d' .config 
         sed -i '/CONFIG_FIRMWARE_INCLUDE_IPERF3/d' .config 
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_VLMCSD/d' .config 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_VLMCSD/d' .config  
+        
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SFTP/d' .config  
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENVPN/d' .config  
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSH/d' .config  
+
         ######################################################################
         #以下选项是定义你需要的功能（y=集成,n=忽略），重新写入到.config文件
         ######################################################################
         
+        echo "CONFIG_FIRMWARE_INCLUDE_SFTP=n" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=n" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_OPENSSH=n" >> .config
         echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config
         echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config
         echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=n" >> .config
