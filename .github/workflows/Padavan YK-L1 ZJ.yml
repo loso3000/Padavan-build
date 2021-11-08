@@ -52,7 +52,7 @@ jobs:
         sh dl_toolchain.sh
     - name: Build Firmware
       run: |
-        cp -r ./config/* /opt/rt-n56u/trunk/user
+        cp -r ./configm/* /opt/rt-n56u/trunk/user
         # cp -r ./hanwckf/configs/boards/YK-L1/* /opt/rt-n56u/trunk/configs/boards/YK-L1
         cd /opt/rt-n56u/trunk
         if [ ! -f configs/templates/$TNAME.config ] ; then
