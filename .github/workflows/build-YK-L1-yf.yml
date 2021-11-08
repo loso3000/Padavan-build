@@ -91,8 +91,8 @@ jobs:
 
         #sed -i '/CONFIG_FIRMWARE_INCLUDE_PARTED/d' .config  
         sed -i '/CONFIG_FIRMWARE_INCLUDE_HTTPS/d' .config  
-        #sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE/d' .config  
-        #sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC/d' .config  
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE/d' .config  
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC/d' .config  
         #sed -i '/CONFIG_FIRMWARE_INCLUDE_FFMPEG_NEW/d' .config  
         #sed -i '/CONFIG_FIRMWARE_INCLUDE_UVC/d' .config  
         # sed -i '/CONFIG_FIRMWARE_ENABLE_EXT2/d' .config  
@@ -117,8 +117,8 @@ jobs:
         echo "CONFIG_FIRMWARE_ENABLE_IPV6=y" >> .config
         #echo "CONFIG_FIRMWARE_INCLUDE_PARTED=n" >> .config
         echo "CONFIG_FIRMWARE_INCLUDE_HTTPS=n" >> .config
-        #echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n" >> .config
-        #echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC=n" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC=n" >> .config
         #echo "CONFIG_FIRMWARE_INCLUDE_FFMPEG_NEW=n" >> .config
         
         echo "CONFIG_FIRMWARE_INCLUDE_SFTP=n" >> .config
