@@ -66,8 +66,8 @@ jobs:
         #因不同型号配置功能不一样，所以先把配置项删除，如果你自己要添加其他的，也要写上删除这一条，切记！！！
         ################################################################################################
         
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_LANG_EN/d' .config #删除配置项MENTOHUST
-        sed -i "s/CONFIG_FIRMWARE_INCLUDE_LANG_CN=y/CONFIG_FIRMWARE_INCLUDE_LANG_EN=y/g" .config
+        # sed -i '/CONFIG_FIRMWARE_INCLUDE_LANG_CN/d' .config #删除配置项MENTOHUST
+        # sed -i "s/CONFIG_FIRMWARE_INCLUDE_LANG_CN=y/CONFIG_FIRMWARE_INCLUDE_LANG_EN=y/g" .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_MENTOHUST/d' .config #删除配置项MENTOHUST
         sed -i '/CONFIG_FIRMWARE_INCLUDE_SCUTCLIENT/d' .config #删除配置项SCUTCLIENT
         sed -i '/CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS/d' .config #删除配置项SS plus+
@@ -85,18 +85,18 @@ jobs:
          sed -i '/CONFIG_FIRMWARE_INCLUDE_TTYD/d' .config 
          sed -i '/CONFIG_FIRMWARE_INCLUDE_NANO/d' .config 
          sed -i '/CONFIG_FIRMWARE_INCLUDE_SFTP/d' .config  
-         #sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD/d' .config 
-         #sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD36/d' .config 
-         #sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config 
-         #sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL/d' .config 
-         #sed -i '/CONFIG_FIRMWARE_INCLUDE_IPERF3/d' .config 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD/d' .config 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD36/d' .config 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENVPN/d' .config  
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL/d' .config 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_IPERF3/d' .config 
          sed -i '/CONFIG_FIRMWARE_INCLUDE_VLMCSD/d' .config  
         
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE/d' .config  
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC/d' .config  
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENVPN/d' .config  
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSH/d' .config  
-        #sed -i '/CONFIG_FIRMWARE_INCLUDE_PARTED/d' .config  
+        #  sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE/d' .config  
+         # sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC/d' .config  
+        #  sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSH/d' .config  
+        # sed -i '/CONFIG_FIRMWARE_INCLUDE_PARTED/d' .config  
         # sed -i '/CONFIG_FIRMWARE_INCLUDE_HTTPS/d' .config  
         # sed -i '/CONFIG_FIRMWARE_INCLUDE_FFMPEG_NEW/d' .config  
         # sed -i '/CONFIG_FIRMWARE_INCLUDE_UVC/d' .config  
@@ -122,21 +122,21 @@ jobs:
         # echo "CONFIG_FIRMWARE_ENABLE_USB=n" >> .config
         # echo "CONFIG_FIRMWARE_INCLUDE_PARTED=n" >> .config
         # echo "CONFIG_FIRMWARE_INCLUDE_HTTPS=n" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC=n" >> .config
+        #  echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n" >> .config
+        #  echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC=n" >> .config
+        # echo "CONFIG_FIRMWARE_INCLUDE_OPENSSH=n" >> .config
          #echo "CONFIG_FIRMWARE_INCLUDE_FFMPEG_NEW=n" >> .config
         
+         echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_SFTP=n" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=n" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_OPENSSH=n" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_NANO=n" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_TTYD=n" >> .config
-         #echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config
-         #echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config
-         #echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=n" >> .config
-         #echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=n" >> .config
-         #echo "CONFIG_FIRMWARE_INCLUDE_SMBD=n" >> .config
-         #echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=n" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=n" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=n" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_SMBD=n" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=n" >> .config
         
         echo "CONFIG_FIRMWARE_INCLUDE_HTOP=n" >> .config
         echo "CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n" >> .config #MENTOHUST
