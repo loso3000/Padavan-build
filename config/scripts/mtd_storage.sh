@@ -397,17 +397,17 @@ EOF
 
 	# create vpn client action script
 	if [ ! -f "$script_vpncs" ] ; then
-		cat > "$script_vpncs" <<-\EEE
+		cat > "$script_vpncs" <<EOF
 #!/bin/sh
 
 ### Custom user script
 ### Called after internal VPN client connected/disconnected to remote VPN server
-### $1        - action (up/down)
-### $IFNAME   - tunnel interface name (e.g. ppp5 or tun0)
-### $IPLOCAL  - tunnel local IP address
-### $IPREMOTE - tunnel remote IP address
-### $DNS1     - peer DNS1
-### $DNS2     - peer DNS2
+### \$1        - action (up/down)
+### \$IFNAME   - tunnel interface name (e.g. ppp5 or tun0)
+### \$IPLOCAL  - tunnel local IP address
+### \$IPREMOTE - tunnel remote IP address
+### \$DNS1     - peer DNS1
+### \$DNS2     - peer DNS2
 
 
 # VPN automatic shunting function at home and abroad is 0 turned off; 1 start
@@ -417,10 +417,10 @@ vpns=`nvram get vpnc_fw_enable`
 vpnc_fw_rules=`nvram get vpnc_fw_rules`
 
 #confdir=`grep "/tmp/ss/dnsmasq.d" /etc/storage/dnsmasq/dnsmasq.conf | sed 's/.*\=//g'`
-#if [ -z $confdir ] ; then 
+#if [ -z \$confdir ] ; then 
     confdir="/tmp/ss/dnsmasq.d"
 #fi
-[ ! -d $confdir ] && mkdir -p $confdir
+[ ! -d \$confdir ] && mkdir -p \$confdir
 restart_dhcpd
 # private LAN subnet behind a remote server (example)
 peer_lan="192.168.9.0"
@@ -430,16 +430,16 @@ peer_msk="255.255.255.0"
 
 func_ipup()
 {
-logger -t "[VPN SHUNT]" "VPN connection! IPREMOTE: $IPREMOTE  IPLOCAL:$IPLOCAL  DNS:$DNS1"
+logger -t "[VPN SHUNT]" "VPN connection! IPREMOTE: \$IPREMOTE  IPLOCAL:\$IPLOCAL  DNS:\$DNS1"
 
-#  route add -net $peer_lan netmask $peer_msk gw $IPREMOTE dev $IFNAME
-if [ "$vpns" == "1" ] ; then
+#  route add -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
+if [ "\$vpns" == "1" ] ; then
     logger -t "[VPN SHUNT]" "VPN connection Ready to start streaming rules"
     [ -f /tmp/vpnc.lock ] && logger -t "[VPN SHUNT]" "Wait 120 seconds to start the script"
     I=120
     while [ -f /tmp/vpnc.lock ]; do
-            I=$(($I - 1))
-            [ $I -lt 0 ] && break
+            I=\$((\$I - 1))
+            [ \$I -lt 0 ] && break
             sleep 1
     done
     touch /tmp/vpnc.lock
@@ -451,8 +451,8 @@ if [ "$vpns" == "1" ] ; then
 	return 1
     fi
     chmod 777 "/tmp/ip-pre-up"
-        if [ $vpnc_fw_rules == "1" ] ; then
-            /tmp/ip-pre-up $IPREMOTE
+        if [ \$vpnc_fw_rules == "1" ] ; then
+            /tmp/ip-pre-up \$IPREMOTE
         else
             /tmp/ip-pre-up
         fi
@@ -473,13 +473,13 @@ if [ "$vpns" == "1" ] ; then
 
 func_ipdown()
 {
-#  route del -net $peer_lan netmask $peer_msk gw $IPREMOTE dev $IFNAME
+#  route del -net \$peer_lan netmask \$peer_msk gw \$IPREMOTE dev \$IFNAME
     logger -t "[VPN SHUNT]" "VPN Disconnect, ready to start canceling the shunting rule"
     [ -f /tmp/vpnc.lock ] && logger -t  "[VPN SHUNT]" "Wait 60 seconds to start the script"
     I=60
     while [ -f /tmp/vpnc.lock ]; do
-            I=$(($I - 1))
-            [ $I -lt 0 ] && break
+            I=\$((\$I - 1))
+            [ \$I -lt 0 ] && break
             sleep 1
     done
     touch /tmp/vpnc.lock
@@ -496,9 +496,9 @@ func_ipdown()
     logger -t "[VPN SHUNT]" "Rule cancel rule complete!"
    return 0
 }
-logger -t vpnc-script "$IFNAME $1"
+logger -t vpnc-script "\$IFNAME \$1"
 
-case "$1" in
+case "\$1" in
 up)
   func_ipup
   ;;
@@ -507,7 +507,7 @@ down)
   ;;
 esac
 
-EEE
+EOF
 		chmod 755 "$script_vpncs"
 	fi
 
