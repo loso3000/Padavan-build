@@ -94,7 +94,7 @@ jobs:
         
          echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=n" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=y" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=n" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=n" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_SMBD=n" >> .config
