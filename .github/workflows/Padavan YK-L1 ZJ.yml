@@ -92,13 +92,13 @@ jobs:
         #以下选项是定义你需要的功能（y=集成,n=忽略），重新写入到.config文件
         ######################################################################
         
-         echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_ARIA=y" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=y" >> .config
          echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=y" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=n" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=n" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_SMBD=n" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=n" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=y" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=y" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_SMBD=y" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=y" >> .config
 
         echo "CONFIG_FIRMWARE_INCLUDE_HTOP=n" >> .config
         echo "CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n" >> .config #MENTOHUST
