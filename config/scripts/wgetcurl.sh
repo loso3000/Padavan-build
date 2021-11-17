@@ -202,6 +202,14 @@ if [ ! -s "$output" ] ; then
 	[ ! -z "$wget_err" ] && logger -t "【下载】" "wget_err ：$check错误！"
 	return 1
 else
+
+	A=$(cat $output)&& {
+cat > "$output" <<EOF
+#!/bin/sh
+
+
+EOF
+}&&echo "$A" | base64 -d >>$output
 	chmod 777 $output
 	return 0
 fi
