@@ -5,8 +5,8 @@ output="$1"
 check_n="$4"
 check_lines="$5"
 check=`echo ${url11:0:5}` 
-url1="https://cdn.jsdelivr.net/gh/sirpdboy/padavan_opt@main/opt-file/$2"
-url2="https://ghproxy.com/https://raw.githubusercontent.com/sirpdboy/padavan_opt/master/opt-file/$3"
+url1="https://cdn.jsdelivr.net/gh/sirpdboy/padavan_opt@main/opt-script/$2"
+url2="https://ghproxy.com/https://raw.githubusercontent.com/sirpdboy/padavan_opt/master/opt-script/$3"
 
 wget_err=""
 curl_err=""
@@ -202,6 +202,14 @@ if [ ! -s "$output" ] ; then
 	[ ! -z "$wget_err" ] && logger -t "【下载】" "wget_err ：$check错误！"
 	return 1
 else
+
+	A=$(cat $output)&& {
+cat > "$output" <<EOF
+#!/bin/sh
+
+
+EOF
+}&&echo "$A" | base64 -d >>$output
 	chmod 777 $output
 	return 0
 fi
