@@ -173,8 +173,8 @@ if [ -s "/usr/bin/wget" ] &&  [ ! -s "$output" ] ; then
 	
 fi
 if [ ! -s "$output" ] ; then
-	logger -t "【下载】" "下载失败:【$output】 URL:【$url1】"
-	logger -t "【下载】" "重新下载:【$output】 URL:【$url2】"
+	logger -t "【下载】" "下载失败:【$output】 "
+	logger -t "【下载】" "重新下载:【$output】 "
 	if [ -s "/opt/bin/curl" ] && [ ! -s "$output" ] ; then
 		[ -d "/opt/bin" ] && cd /opt/bin
 		download_curl /opt/bin/curl $url2
@@ -197,7 +197,7 @@ fi
 
 if [ ! -s "$output" ] ; then
 	[ -f "$output" ] && rm -f "$output"
-	logger -t "【下载】" "下载失败:【$output】 URL:【$url2】"
+	logger -t "【下载】" "下载失败:【$output】"
 	[ ! -z "$curl_err" ] && logger -t "【下载】" "curl_err ：$check错误！"
 	[ ! -z "$wget_err" ] && logger -t "【下载】" "wget_err ：$check错误！"
 	return 1
