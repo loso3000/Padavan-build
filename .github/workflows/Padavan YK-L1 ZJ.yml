@@ -25,7 +25,7 @@ env:
   TOOLCHAIN_URL: https://github.com/hanwckf/padavan-toolchain/releases/download/v1.1/mipsel-linux-uclibc.tar.xz
   WORK_PATH: /opt/rt-n56u
   TIME_ZONE: Asia/Shanghai
-  TNAME: YK-L1
+  TNAME: 360P2  K2P
   FIRMWARE_DATEPREFIX: $(date +"%Y%m%d")
   FIRMWARE_AUTHOR: ZJ
   FIRMWARE_PATH: /opt/firmwares
@@ -76,29 +76,28 @@ jobs:
         sed -i '/CONFIG_FIRMWARE_INCLUDE_FRPS/d' .config #删除配置项adbyby plus+
         sed -i '/CONFIG_FIRMWARE_INCLUDE_TUNSAFE/d' .config #删除配置项adbyby plus+
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ALIDDNS/d' .config #删除配置项阿里DDNS
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_SMARTDNS/d' .config
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_SRELAY/d' .config
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_HTOP/d' .config 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SMARTDNS/d' .config # 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SRELAY/d' .config # 
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_HTOP/d' .config  # 
 
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD/d' .config 
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD36/d' .config 
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENVPN/d' .config  
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config 
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL/d' .config 
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_IPERF3/d' .config 
-         sed -i '/CONFIG_FIRMWARE_INCLUDE_VLMCSD/d' .config  
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD/d' .config # 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD36/d' .config # 
+         #  sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENVPN/d' .config  # 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config # 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL/d' .config # 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_IPERF3/d' .config # 
+         sed -i '/CONFIG_FIRMWARE_INCLUDE_VLMCSD/d' .config  # 
          
         ######################################################################
         #以下选项是定义你需要的功能（y=集成,n=忽略），重新写入到.config文件
         ######################################################################
-        
-         echo "CONFIG_FIRMWARE_INCLUDE_ARIA=y" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=y" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=y" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=y" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=y" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_SMBD=y" >> .config
-         echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=y" >> .config
+         echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config # 
+         echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config # 
+        #  echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=y" >> .config # 
+         echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=n" >> .config # 
+         echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=n" >> .config # 
+         echo "CONFIG_FIRMWARE_INCLUDE_SMBD=n" >> .config #  
+         echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=n" >> .config # 
 
         echo "CONFIG_FIRMWARE_INCLUDE_HTOP=n" >> .config
         echo "CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n" >> .config #MENTOHUST
