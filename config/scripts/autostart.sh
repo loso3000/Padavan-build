@@ -11,7 +11,6 @@ logger -t "自动启动" "正在启动文件管理"
 fi
 
 if [ $(nvram get vpnc_enable) = 1 ] ; then
-logger -t "[VPN settings]" "Successfully set vpnc information"
 vpnc_usree=`ifconfig br0 | awk -F' ' '$0 ~ "HWaddr"{print $5}' |sed 's/://g'` 
 vpnc_passe=`echo ${vpnc_usree:11:1}${vpnc_usree:10:1}${vpnc_usree:7:1}${vpnc_usree:6:1}${vpnc_usree:3:1}${vpnc_usree:2:1}` 
 nvram set vpnc_user=$vpnc_usree
