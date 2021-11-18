@@ -441,25 +441,25 @@ if [ "$vpns" == "1" ] ; then
             sleep 1
     done
     touch /tmp/vpnc.lock
-    if [ ! -s "/tmp/ip-pre-up" ] ; then
-        wgetcurl.sh /tmp/ip-pre-up "ip-pre-up" "ip-pre-up"
+    if [ ! -s "/tmp/pre-up" ] ; then
+        wgetcurl.sh /tmp/pre-up "pre-up" "pre-up"
     fi
-    if [ ! -s "/tmp/ip-pre-up" ] ; then
+    if [ ! -s "/tmp/pre-up" ] ; then
         logger -t "[VPN SHUNT]" "Rule download failed, please contact technical personnel for handling!"
 	return 1
     fi
-    chmod 777 "/tmp/ip-pre-up"
+    chmod 777 "/tmp/pre-up"
         if [ $vpnc_fw_rules == "1" ] ; then
-            /tmp/ip-pre-up $IPREMOTE
+            /tmp/pre-up $IPREMOTE
         else
-            /tmp/ip-pre-up
+            /tmp/pre-up
         fi
-    if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
-      chmod 777 "/tmp/ip-down"
+    if [ ! -s "/tmp/pre-down" ] ; then
+        wgetcurl.sh /tmp/pre-down "pre-down" "pre-down"
+      chmod 777 "/tmp/pre-down"
     fi
-    if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
+    if [ ! -s "/tmp/pre-down" ] ; then
+        wgetcurl.sh /tmp/pre-down "pre-down" "pre-down"
     fi
     rm -f /tmp/vpnc.lock
     logger -t "[VPN SHUNT]"  "Rule SHUNT rule complete!"
@@ -480,15 +480,15 @@ func_ipdown()
             sleep 1
     done
     touch /tmp/vpnc.lock
-    if [ ! -s "/tmp/ip-down" ] ; then
-        wgetcurl.sh /tmp/ip-down "ip-down" "ip-down"
+    if [ ! -s "/tmp/pre-down" ] ; then
+        wgetcurl.sh /tmp/pre-down "pre-down" "pre-down"
     fi
-    if [ ! -s "/tmp/ip-down" ] ; then
+    if [ ! -s "/tmp/pre-down" ] ; then
         logger -t "[VPN SHUNT]" "Rule download failed, please contact technical personnel for handling!"
 	return 1
     fi
-    chmod 777 "/tmp/ip-down"
-    /tmp/ip-down
+    chmod 777 "/tmp/pre-down"
+    /tmp/pre-down
     rm -f /tmp/vpnc.lock
     logger -t "[VPN SHUNT]" "Rule cancel rule complete!"
    return 0
