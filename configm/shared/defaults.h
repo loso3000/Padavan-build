@@ -37,10 +37,10 @@
 
 #define DEF_WLAN_2G_CC		"CN"
 #define DEF_WLAN_5G_CC		"US"
-#define DEF_WLAN_2G_SSID	"foxfly_%s"
-#define DEF_WLAN_5G_SSID	"foxfly_5G_%s"
-#define DEF_WLAN_2G_GSSID	"foxfly_GUEST_%s"
-#define DEF_WLAN_5G_GSSID	"foxfly_GUEST_5G_%s"
+#define DEF_WLAN_2G_SSID	"FOXFLY_%s"
+#define DEF_WLAN_5G_SSID	"FOXFLY_5G_%s"
+#define DEF_WLAN_2G_GSSID	"FOXFLY_GUEST_%s"
+#define DEF_WLAN_5G_GSSID	"FOXFLY_GUEST_5G_%s"
 #define DEF_WLAN_2G_PSK		"1234567890"
 #define DEF_WLAN_5G_PSK		"1234567890"
 
