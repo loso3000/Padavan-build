@@ -1,5 +1,5 @@
 #修改TNAME: K2P-5.0 中的K2P-5.0为你需要编译的型号，注意名称要与configs/templates/目录下的名字相同
-name: Build Padavan k2p-ZJ
+name: Build Padavan YK-L1-ZJ
 
 on:
   workflow_dispatch:
@@ -25,7 +25,7 @@ env:
   TOOLCHAIN_URL: https://github.com/hanwckf/padavan-toolchain/releases/download/v1.1/mipsel-linux-uclibc.tar.xz
   WORK_PATH: /opt/rt-n56u
   TIME_ZONE: Asia/Shanghai
-  TNAME: K2P
+  TNAME: YK-L1
   FIRMWARE_DATEPREFIX: $(date +"%Y%m%d")
   FIRMWARE_AUTHOR: ZJ
   FIRMWARE_PATH: /opt/firmwares
