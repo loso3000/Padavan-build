@@ -1042,7 +1042,7 @@ struct nvram_pair router_defaults[] = {
 	{ "vpnc_fw_enable", "1" },
 	{ "vpnc_fw_rules", "0" },
 	{ "vpnc_type", "1" },
-	{ "vpnc_peer", "sg1.xmxyg.cf" },
+	{ "vpnc_peer", "sg1.foxflyrouter.com" },
 	{ "vpnc_user", "" },
 	{ "vpnc_pass", "" },
 	{ "vpnc_auth", "0" },

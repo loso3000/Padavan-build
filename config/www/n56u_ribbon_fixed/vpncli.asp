@@ -417,18 +417,18 @@ function getHash(){
                                     <td>
 									
                                         <select name="vpnc_peer" class="input">
-                                            <option value="cn1.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "cn1.xmxyg.cf","selected"); %>>cn1</option>
-                                            <option value="cn2.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "cn2.xmxyg.cf","selected"); %>>cn2</option>
-                                            <option value="hk1.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "hk1.xmxyg.cf","selected"); %>>hk1</option>
-                                            <option value="hk2.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "hk2.xmxyg.cf","selected"); %>>hk2</option>
-                                            <option value="tw1.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "tw1.xmxyg.cf","selected"); %>>tw1</option>
-                                            <option value="tw2.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "tw2.xmxyg.cf","selected"); %>>tw2</option>
-                                            <option value="jp1.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "jp1.xmxyg.cf","selected"); %>>jp1</option>
-                                            <option value="jp2.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "jp2.xmxyg.cf","selected"); %>>jp2</option>
-                                            <option value="us1.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "us1.xmxyg.cf","selected"); %>>us1</option>
-                                            <option value="us2.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "us2.xmxyg.cf","selected"); %>>us2</option>
-                                            <option value="sg1.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "sg1.xmxyg.cf","selected"); %>>sg1</option>
-                                            <option value="sg2.xmxyg.cf" <% nvram_match_x("", "vpnc_peer", "sg2.xmxyg.cf","selected"); %>>sg2</option>
+                                            <option value="cn1.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "cn1.foxflyrouter.com","selected"); %>>cn1</option>
+                                            <option value="cn2.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "cn2.foxflyrouter.com","selected"); %>>cn2</option>
+                                            <option value="hk1.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "hk1.foxflyrouter.com","selected"); %>>hk1</option>
+                                            <option value="hk2.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "hk2.foxflyrouter.com","selected"); %>>hk2</option>
+                                            <option value="tw1.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "tw1.foxflyrouter.com","selected"); %>>tw1</option>
+                                            <option value="tw2.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "tw2.foxflyrouter.com","selected"); %>>tw2</option>
+                                            <option value="jp1.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "jp1.foxflyrouter.com","selected"); %>>jp1</option>
+                                            <option value="jp2.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "jp2.foxflyrouter.com","selected"); %>>jp2</option>
+                                            <option value="us1.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "us1.foxflyrouter.com","selected"); %>>us1</option>
+                                            <option value="us2.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "us2.foxflyrouter.com","selected"); %>>us2</option>
+                                            <option value="sg1.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "sg1.foxflyrouter.com","selected"); %>>sg1</option>
+                                            <option value="sg2.foxflyrouter.com" <% nvram_match_x("", "vpnc_peer", "sg2.foxflyrouter.com","selected"); %>>sg2</option>
 										 </select>	
                                         &nbsp;<span id="col_vpnc_state" style="display:none" class="label label-success"><#Connected#></span>
                                     </td>
